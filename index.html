@@ -2,918 +2,1039 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Conflict Watch — Middle East Intelligence</title>
-
-<!-- SEO & Social sharing meta tags -->
-<meta name="description" content="Live Middle East conflict intelligence dashboard. Real-time news feeds, threat levels, satellite map, and conflict zone tracking. Updated every 5 minutes.">
-<meta name="keywords" content="Middle East, conflict, Gaza, Lebanon, Iran, Yemen, Syria, war news, live updates">
-<meta name="author" content="AIDAS Studios — India Today Group">
-
-<!-- Open Graph — WhatsApp, Facebook, LinkedIn previews -->
-<meta property="og:title" content="Conflict Watch — Middle East Intelligence">
-<meta property="og:description" content="Live threat levels, breaking news feeds & satellite map. Updated every 5 minutes.">
-<meta property="og:type" content="website">
-<meta property="og:image" content="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?bbox=25,10,65,42&bboxSR=4326&size=1200,630&f=image&format=jpg">
-
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Conflict Watch — Middle East Intelligence">
-<meta name="twitter:description" content="Live threat levels, breaking news feeds & satellite map. Updated every 5 minutes.">
-<meta name="twitter:image" content="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?bbox=25,10,65,42&bboxSR=4326&size=1200,630&f=image&format=jpg">
-
-<!-- PWA — Add to Home Screen -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Conflict Watch">
-<meta name="theme-color" content="#000000">
-<meta name="mobile-web-app-capable" content="yes">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT Sales Bot</title>
 <style>
-* { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; -webkit-tap-highlight-color:transparent; }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+:root{
+  --bg:#f2f2f7;--card:#fff;--card2:#f8f8fc;
+  --text:#1c1c1e;--text2:#8e8e93;--text3:#aeaeb2;
+  --sep:rgba(0,0,0,0.08);
+  --blue:#007aff;--green:#34c759;--red:#ff3b30;
+  --orange:#ff9500;--purple:#af52de;--teal:#32ade6;
+  --amber:#ffcc00;
+  --r:20px;--r3:10px;
+  font-family:-apple-system,'Helvetica Neue',sans-serif;
+}
+body{background:var(--bg);min-height:100vh}
 
-:root {
-  --bg: #000000;
-  --surface: rgba(28,28,30,0.95);
-  --surface2: rgba(44,44,46,0.8);
-  --surface3: rgba(58,58,60,0.5);
-  --label: #ffffff;
-  --label2: rgba(255,255,255,0.55);
-  --label3: rgba(255,255,255,0.28);
-  --red: #ff453a;
-  --orange: #ff9f0a;
-  --yellow: #ffd60a;
-  --green: #30d158;
-  --teal: #5ac8fa;
-  --blue: #0a84ff;
-  --sep: rgba(255,255,255,0.07);
-  --r: 18px;
-  --r-sm: 12px;
-}
+/* ── APP SHELL ── */
+.app-shell{display:none;max-width:430px;margin:0 auto;min-height:100vh;background:var(--bg);flex-direction:column}
+.app-shell.active{display:flex}
 
-html, body {
-  background: var(--bg);
-  min-height: 100dvh;
-  color: var(--label);
-  font-family: -apple-system, 'Helvetica Neue', sans-serif;
-  overflow-x: hidden;
+/* ── TAB BAR ── */
+.tabbar{
+  display:flex;background:rgba(242,242,247,0.92);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-top:0.5px solid rgba(0,0,0,0.12);
+  padding:8px 0 20px;flex-shrink:0;position:sticky;bottom:0;z-index:100;
 }
+.tab-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  cursor:pointer;padding:4px 0;transition:opacity .12s;
+}
+.tab-item:active{opacity:0.6}
+.tab-icon{font-size:22px;line-height:1}
+.tab-label{font-size:10px;font-weight:500;color:var(--text2)}
+.tab-item.active .tab-label{color:var(--blue)}
+.tab-item.active .tab-icon-svg path,.tab-item.active .tab-icon-svg rect{fill:var(--blue)}
 
-body::before {
-  content:'';
-  position:fixed; inset:0;
-  background:
-    radial-gradient(ellipse 70% 40% at 15% 10%, rgba(255,69,58,0.07) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 85% 80%, rgba(10,132,255,0.05) 0%, transparent 60%);
-  pointer-events:none; z-index:0;
-}
+/* ── SCREEN SYSTEM (within a tab) ── */
+.tab-pane{display:none;flex:1;overflow:hidden;flex-direction:column}
+.tab-pane.active{display:flex}
 
-.page {
-  position:relative; z-index:1;
-  padding: 0 0 32px 0;
-  max-width: 430px;
-  margin: 0 auto;
-}
+.screen{display:none;flex:1;flex-direction:column;background:var(--bg);animation:screenIn .26s cubic-bezier(.4,0,.2,1)}
+.screen.active{display:flex}
+@keyframes screenIn{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:translateX(0)}}
+@keyframes screenBack{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:translateX(0)}}
+.screen.back{animation:screenBack .22s cubic-bezier(.4,0,.2,1)}
 
-/* ─── STATUS BAR SPACER ─── */
-.safe-top { height: env(safe-area-inset-top, 12px); }
-.safe-bottom { height: env(safe-area-inset-bottom, 16px); }
+.scroll-area{overflow-y:auto;flex:1}
+.scroll-area::-webkit-scrollbar{display:none}
 
-/* ─── HEADER ─── */
-.header {
-  display:flex;
-  align-items:flex-end;
-  justify-content:space-between;
-  padding: 12px 16px 10px;
-}
+/* ── STATUS BAR ── */
+.statusbar{display:flex;align-items:center;justify-content:space-between;padding:14px 22px 4px;font-size:13px;font-weight:600;color:var(--text);flex-shrink:0}
+.statusbar-right{display:flex;align-items:center;gap:6px;font-size:12px}
+.battery{width:22px;height:11px;border:1.5px solid var(--text);border-radius:3px;position:relative}
+.battery::after{content:'';position:absolute;right:-4px;top:50%;transform:translateY(-50%);width:2.5px;height:5px;background:var(--text);border-radius:0 1px 1px 0}
+.battery-fill{width:75%;height:100%;background:var(--green);border-radius:1px}
 
-.header-title {
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  line-height: 1;
-}
+/* ── NAV BAR ── */
+.navbar{display:flex;align-items:center;justify-content:space-between;padding:6px 22px 12px;flex-shrink:0}
+.back-btn{display:flex;align-items:center;gap:3px;color:var(--blue);font-size:17px;cursor:pointer;background:none;border:none;font-family:inherit;padding:6px 0}
+.back-btn svg{width:10px;height:17px}
+.nav-title{font-size:17px;font-weight:600;color:var(--text)}
 
-.header-right { display:flex; align-items:center; gap:8px; }
+/* ── TYPOGRAPHY ── */
+.large-title{padding:0 22px 8px;font-size:34px;font-weight:700;color:var(--text);letter-spacing:-0.5px;line-height:1.15}
+.large-title span{color:var(--blue)}
+.section-label{padding:20px 22px 6px;font-size:13px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.04em}
 
-.live-pill {
-  display:flex; align-items:center; gap:5px;
-  background:rgba(255,69,58,0.14);
-  border:1px solid rgba(255,69,58,0.22);
-  border-radius:20px;
-  padding:4px 10px;
-  font-size:11px; font-weight:600;
-  color:var(--red);
-}
-.live-dot {
-  width:5px; height:5px; border-radius:50%;
-  background:var(--red);
-  animation:pulse 1.8s ease-in-out infinite;
-}
-@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.35;transform:scale(0.7)} }
+/* ── SOURCE BADGE ── */
+.source-badge{margin:0 16px 6px;background:rgba(0,122,255,0.07);border:1px solid rgba(0,122,255,0.18);border-radius:10px;padding:9px 14px;display:flex;align-items:flex-start;gap:8px}
+.source-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:4px}
+.source-text{font-size:12px;color:var(--blue);font-weight:500;line-height:1.5}
+.source-text strong{font-weight:700}
 
-#clock { font-size:12px; color:var(--label3); font-variant-numeric:tabular-nums; }
+/* ── CARD GROUP ── */
+.card-group{background:var(--card);border-radius:var(--r);margin:0 16px 8px;overflow:hidden}
+.card-row{display:flex;align-items:center;padding:13px 16px;cursor:pointer;transition:background .1s;position:relative}
+.card-row:active{background:rgba(0,0,0,0.04)}
+.card-row+.card-row::before{content:'';position:absolute;top:0;left:56px;right:0;height:0.5px;background:var(--sep)}
+.card-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;margin-right:14px}
+.card-row-content{flex:1;min-width:0}
+.card-row-title{font-size:17px;color:var(--text);font-weight:400}
+.card-row-sub{font-size:13px;color:var(--text2);margin-top:1px}
+.card-row-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.chevron{color:var(--text3);font-size:14px;margin-left:2px}
 
-/* ─── TICKER ─── */
-.ticker {
-  display:flex; align-items:stretch;
-  background:var(--surface);
-  border-top:1px solid var(--sep);
-  border-bottom:1px solid var(--sep);
-  overflow:hidden;
-  height:34px;
-  margin-bottom:12px;
-}
-.ticker-tag {
-  background:var(--red);
-  color:#fff;
-  font-size:10px; font-weight:700;
-  letter-spacing:0.8px;
-  padding:0 12px;
-  display:flex; align-items:center;
-  flex-shrink:0;
-  text-transform:uppercase;
-}
-.ticker-scroll { overflow:hidden; flex:1; display:flex; align-items:center; }
-.ticker-inner {
-  display:flex; white-space:nowrap;
-  animation:scroll 70s linear infinite;
-}
-.ticker-inner span {
-  font-size:12px; color:var(--label2);
-  padding:0 22px;
-}
-.ticker-inner span::before { content:'· '; color:var(--label3); }
-@keyframes scroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+/* ── BADGES ── */
+.badge{font-size:12px;font-weight:600;padding:2px 8px;border-radius:10px;white-space:nowrap}
+.badge-green{background:rgba(52,199,89,0.12);color:var(--green)}
+.badge-red{background:rgba(255,59,48,0.1);color:var(--red)}
+.badge-blue{background:rgba(0,122,255,0.1);color:var(--blue)}
+.badge-orange{background:rgba(255,149,0,0.12);color:var(--orange)}
+.badge-purple{background:rgba(175,82,222,0.1);color:var(--purple)}
+.badge-amber{background:rgba(255,204,0,0.15);color:#b8860b}
+.badge-gray{background:rgba(0,0,0,0.06);color:var(--text2)}
+.badge-teal{background:rgba(50,173,230,0.12);color:var(--teal)}
 
-/* ─── GRID ─── */
-.grid {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  padding:0 12px;
-}
+/* ── HERO ── */
+.hero-widget{margin:12px 16px 8px;border-radius:var(--r);overflow:hidden;background:var(--blue);padding:22px 22px 20px;color:#fff;cursor:pointer;transition:transform .15s;position:relative}
+.hero-widget:active{transform:scale(0.98)}
+.hero-orb{position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.08)}
+.hero-orb2{position:absolute;right:20px;bottom:-30px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.06)}
+.hero-eye{font-size:12px;font-weight:600;opacity:.7;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+.hero-title{font-size:26px;font-weight:700;letter-spacing:-.3px;margin-bottom:4px}
+.hero-sub{font-size:14px;opacity:.8}
 
-/* ─── WIDGET ─── */
-.w {
-  background:var(--surface);
-  border-radius:var(--r);
-  border:1px solid var(--sep);
-  padding:14px;
-  position:relative;
-  overflow:hidden;
-  animation:wIn 0.45s cubic-bezier(0.34,1.5,0.64,1) both;
-}
-@keyframes wIn {
-  from{opacity:0;transform:scale(0.88) translateY(14px)}
-  to{opacity:1;transform:none}
-}
-.w:nth-child(1){animation-delay:.00s}
-.w:nth-child(2){animation-delay:.04s}
-.w:nth-child(3){animation-delay:.08s}
-.w:nth-child(4){animation-delay:.12s}
-.w:nth-child(5){animation-delay:.16s}
-.w:nth-child(6){animation-delay:.20s}
-.w:nth-child(7){animation-delay:.24s}
-.w:nth-child(8){animation-delay:.28s}
-.w:nth-child(9){animation-delay:.32s}
+/* ── 2-UP WIDGETS ── */
+.widget-2up{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 16px 8px}
+.widget-sm{background:var(--card);border-radius:var(--r);padding:16px 16px 14px;cursor:pointer;transition:transform .15s}
+.widget-sm:active{transform:scale(0.96)}
+.widget-sm-icon{font-size:22px;margin-bottom:8px}
+.widget-sm-val{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-.3px}
+.widget-sm-label{font-size:12px;color:var(--text2);margin-top:2px;font-weight:500}
+.widget-sm-badge{margin-top:8px}
 
-.w-full { grid-column:1/-1; }
+/* ── PILLS ── */
+.pill-scroll{display:flex;gap:7px;overflow-x:auto;padding:0 16px 4px;scrollbar-width:none}
+.pill-scroll::-webkit-scrollbar{display:none}
+.pill{display:inline-flex;align-items:center;gap:5px;background:var(--card);border-radius:20px;padding:7px 14px;white-space:nowrap;font-size:14px;font-weight:500;color:var(--text);cursor:pointer;flex-shrink:0;transition:background .1s,transform .12s}
+.pill:active{transform:scale(.95)}
+.pill.selected{background:var(--blue);color:#fff}
+.pill-dot{width:6px;height:6px;border-radius:50%}
 
-/* accent glows */
-.w-red::before   { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 100% 80% at 0% 0%, rgba(255,69,58,0.08) 0%, transparent 70%); pointer-events:none; }
-.w-orange::before{ content:''; position:absolute; inset:0; background:radial-gradient(ellipse 100% 80% at 0% 0%, rgba(255,159,10,0.07) 0%, transparent 70%); pointer-events:none; }
-.w-green::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 100% 80% at 100% 100%, rgba(48,209,88,0.07) 0%, transparent 70%); pointer-events:none; }
-.w-blue::before  { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 100% 80% at 100% 0%, rgba(10,132,255,0.07) 0%, transparent 70%); pointer-events:none; }
+/* ── FLOW CARDS ── */
+.flow-card{margin:0 16px 8px;background:var(--card);border-radius:var(--r);padding:18px 18px 16px}
+.flow-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-size:13px;font-weight:600;margin-bottom:10px}
+.flow-num.blue{background:var(--blue);color:#fff}
+.flow-num.green{background:var(--green);color:#fff}
+.flow-num.orange{background:var(--orange);color:#fff}
+.flow-title{font-size:17px;font-weight:600;color:var(--text);margin-bottom:4px}
+.flow-sub{font-size:14px;color:var(--text2);line-height:1.5}
 
-/* ─── WIDGET LABEL ─── */
-.wl {
-  font-size:11px; font-weight:600;
-  color:var(--label2);
-  letter-spacing:0.3px;
-  text-transform:uppercase;
-  margin-bottom:8px;
-  display:flex; align-items:center; gap:5px;
-}
-.wl-icon {
-  width:16px; height:16px; border-radius:4px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:9px;
-}
+/* ── DETAIL ── */
+.detail-header{margin:4px 16px 16px;background:var(--card);border-radius:var(--r);padding:20px}
+.detail-icon{font-size:36px;margin-bottom:10px}
+.detail-name{font-size:26px;font-weight:700;letter-spacing:-.3px;color:var(--text)}
+.detail-cat{font-size:14px;color:var(--text2);margin-top:2px}
+.detail-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--sep);border-radius:var(--r3);overflow:hidden;margin-top:16px}
+.detail-stat{background:var(--card2);padding:12px 10px;text-align:center}
+.detail-stat-val{font-size:17px;font-weight:700;color:var(--text);letter-spacing:-.2px}
+.detail-stat-lbl{font-size:11px;color:var(--text2);margin-top:2px;font-weight:500}
 
-/* ─── STAT ─── */
-.stat-num {
-  font-size:44px; font-weight:700;
-  letter-spacing:-2px; line-height:1;
-  margin-bottom:2px;
-}
-.stat-desc { font-size:12px; color:var(--label2); line-height:1.3; }
+/* ── SEGMENT ── */
+.segment-wrap{padding:0 16px;margin-bottom:12px}
+.segment{display:grid;grid-template-columns:repeat(4,1fr);background:rgba(0,0,0,0.07);border-radius:11px;padding:3px}
+.seg-btn{text-align:center;padding:7px 4px;font-size:12px;font-weight:500;color:var(--text2);border-radius:9px;cursor:pointer;transition:all .18s cubic-bezier(.4,0,.2,1)}
+.seg-btn.active{background:var(--card);color:var(--text);font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,0.12)}
 
-.c-red .stat-num    { color:var(--red); }
-.c-orange .stat-num { color:var(--orange); }
-.c-green .stat-num  { color:var(--green); }
-.c-blue .stat-num   { color:var(--blue); }
-.c-red .wl-icon    { background:rgba(255,69,58,0.18); color:var(--red); }
-.c-orange .wl-icon { background:rgba(255,159,10,0.18); color:var(--orange); }
-.c-green .wl-icon  { background:rgba(48,209,88,0.16); color:var(--green); }
-.c-blue .wl-icon   { background:rgba(10,132,255,0.18); color:var(--blue); }
+/* ── INFO BLOCK ── */
+.info-block{margin:0 16px 8px;background:var(--card);border-radius:var(--r);overflow:hidden}
+.info-block-row{padding:13px 16px;position:relative}
+.info-block-row+.info-block-row::before{content:'';position:absolute;top:0;left:16px;right:0;height:0.5px;background:var(--sep)}
+.info-block-label{font-size:12px;color:var(--text2);font-weight:500;margin-bottom:4px}
+.info-block-val{font-size:15px;color:var(--text);line-height:1.5}
 
-/* ─── ZONE LIST ─── */
-.zone-list { display:flex; flex-direction:column; }
-.zone-row {
-  display:flex; align-items:center;
-  justify-content:space-between;
-  padding:8px 0;
-  border-bottom:1px solid var(--sep);
-}
-.zone-row:last-child { border-bottom:none; padding-bottom:0; }
-.zone-row:first-child { padding-top:0; }
-.z-left { display:flex; align-items:center; gap:8px; }
-.zdot {
-  width:7px; height:7px; border-radius:50%; flex-shrink:0;
-}
-.zdot-r { background:var(--red); box-shadow:0 0 5px rgba(255,69,58,0.5); animation:pulse 2s infinite; }
-.zdot-o { background:var(--orange); }
-.zdot-y { background:var(--yellow); }
-.zdot-g { background:var(--green); }
-.z-name { font-size:13px; font-weight:500; }
-.z-sub { font-size:11px; color:var(--label3); }
-.zbadge {
-  font-size:10px; font-weight:600;
-  padding:2px 8px; border-radius:20px;
-  white-space:nowrap;
-}
-.zb-r { background:rgba(255,69,58,0.14); color:var(--red); }
-.zb-o { background:rgba(255,159,10,0.14); color:var(--orange); }
-.zb-y { background:rgba(255,214,10,0.11); color:var(--yellow); }
-.zb-g { background:rgba(48,209,88,0.11); color:var(--green); }
+/* ── SHOW ITEM ── */
+.show-item{padding:13px 16px;position:relative}
+.show-item+.show-item::before{content:'';position:absolute;top:0;left:16px;right:0;height:0.5px;background:var(--sep)}
+.show-item-name{font-size:15px;color:var(--text);font-weight:500;margin-bottom:2px}
+.show-item-time{font-size:13px;color:var(--text2)}
 
-/* ─── NEWS FEED ─── */
-.news-list { display:flex; flex-direction:column; }
-.news-row {
-  display:flex; gap:9px;
-  padding:10px 0;
-  border-bottom:1px solid var(--sep);
-  text-decoration:none; color:inherit;
-  -webkit-touch-callout:none;
-  transition:opacity 0.15s;
-}
-.news-row:last-child { border-bottom:none; padding-bottom:0; }
-.news-row:first-child { padding-top:0; }
-.news-row:active { opacity:0.6; }
-.news-bar {
-  width:3px; flex-shrink:0; border-radius:2px;
-  align-self:stretch; min-height:12px;
-}
-.news-body {}
-.news-meta { display:flex; align-items:center; gap:6px; margin-bottom:3px; }
-.news-src { font-size:10px; font-weight:700; letter-spacing:0.3px; text-transform:uppercase; }
-.news-time { font-size:10px; color:var(--label3); }
-.brk {
-  font-size:9px; font-weight:700;
-  background:var(--red); color:#fff;
-  padding:1px 5px; border-radius:3px;
-  letter-spacing:0.5px;
-  animation:pulse 1.5s infinite;
-}
-.news-hl { font-size:13px; font-weight:500; line-height:1.35; color:var(--label); }
+/* ── TAG CLOUD ── */
+.tag-cloud{padding:12px 16px;display:flex;flex-wrap:wrap;gap:6px}
+.adv-tag{background:rgba(0,0,0,0.05);border-radius:8px;padding:6px 11px;font-size:13px;color:var(--text)}
 
-/* ─── MAP ─── */
-.map-wrap {
-  border-radius:12px; overflow:hidden;
-  background:#0d1410; margin-top:8px;
+/* ── COMP ROW ── */
+.comp-row{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;position:relative}
+.comp-row+.comp-row::before{content:'';position:absolute;top:0;left:16px;right:0;height:0.5px;background:var(--sep)}
+.comp-name{font-size:15px;color:var(--text)}
+.comp-subs{font-size:13px;color:var(--text2);flex-shrink:0;margin-left:8px}
+
+/* ── NOTE CARD ── */
+.note-card{margin:0 16px 8px;background:linear-gradient(135deg,#007aff 0%,#0055d4 100%);border-radius:var(--r);padding:18px}
+.note-label{font-size:11px;font-weight:600;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px}
+.note-body{font-size:15px;color:#fff;line-height:1.6}
+
+/* ── DATA SOURCE ── */
+.data-source{margin:0 16px 8px;padding:10px 14px;background:var(--card);border-radius:var(--r3);display:flex;align-items:flex-start;gap:8px}
+.data-source-text{font-size:11px;color:var(--text2);line-height:1.5}
+.data-source-text strong{color:var(--text);font-weight:600}
+
+/* ══════════════════════════════════════
+   ADVERTISER INTEL STYLES
+══════════════════════════════════════ */
+
+/* Advertiser hero card */
+.adv-hero{
+  margin:12px 16px 8px;border-radius:var(--r);padding:20px;
+  background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);
+  color:#fff;position:relative;overflow:hidden;
 }
+.adv-hero-orb{position:absolute;right:-30px;top:-30px;width:130px;height:130px;border-radius:50%;background:rgba(255,149,0,0.12)}
+.adv-hero-orb2{position:absolute;left:-20px;bottom:-20px;width:90px;height:90px;border-radius:50%;background:rgba(0,122,255,0.1)}
+.adv-hero-tag{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:6px}
+.adv-hero-name{font-size:28px;font-weight:700;letter-spacing:-.4px;margin-bottom:4px}
+.adv-hero-sub{font-size:13px;color:rgba(255,255,255,.6);line-height:1.5}
+.adv-hero-products{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px}
+.adv-product-tag{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);border-radius:20px;padding:4px 10px;font-size:11px;color:rgba(255,255,255,.85);font-weight:500}
 
-/* ─── BARS ─── */
-.bars { display:flex; align-items:flex-end; gap:6px; height:64px; margin-top:8px; }
-.bar-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end; }
-.bar-fill { width:100%; border-radius:3px 3px 0 0; }
-.bar-lbl { font-size:9px; color:var(--label3); font-weight:500; }
+/* Gap signal cards */
+.gap-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 16px 8px}
+.gap-card{background:var(--card);border-radius:var(--r);padding:14px 14px 12px;position:relative;overflow:hidden}
+.gap-card-accent{position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.gap-card-label{font-size:11px;color:var(--text2);font-weight:500;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.gap-card-val{font-size:20px;font-weight:700;color:var(--text);letter-spacing:-.3px;margin-bottom:2px}
+.gap-card-sub{font-size:11px;color:var(--text2);line-height:1.4}
 
-/* ─── SOURCES ─── */
-.src-list { display:flex; flex-direction:column; gap:6px; margin-top:4px; }
-.src-row {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:9px 11px;
-  background:var(--surface2);
-  border-radius:var(--r-sm);
-  text-decoration:none;
-  transition:opacity 0.15s;
+/* Where active / where missing visual row */
+.presence-row{margin:0 16px 8px;background:var(--card);border-radius:var(--r);overflow:hidden}
+.presence-header{padding:14px 16px 10px;border-bottom:0.5px solid var(--sep)}
+.presence-title{font-size:15px;font-weight:600;color:var(--text)}
+.presence-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.presence-item{display:flex;align-items:center;padding:11px 16px;position:relative;gap:10px}
+.presence-item+.presence-item::before{content:'';position:absolute;top:0;left:16px;right:0;height:0.5px;background:var(--sep)}
+.presence-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.presence-dot.active{background:var(--green)}
+.presence-dot.missing{background:var(--red)}
+.presence-dot.partial{background:var(--orange)}
+.presence-channel{font-size:14px;color:var(--text);flex:1}
+.presence-value{font-size:12px;font-weight:600;flex-shrink:0}
+.presence-value.active{color:var(--green)}
+.presence-value.missing{color:var(--red)}
+.presence-value.partial{color:var(--orange)}
+
+/* Pitch property cards (recommended ITGD properties for this advertiser) */
+.pitch-card{
+  margin:0 16px 8px;background:var(--card);border-radius:var(--r);
+  padding:16px;cursor:pointer;transition:transform .12s;position:relative;overflow:hidden;
 }
-.src-row:active { opacity:0.6; }
-.src-name { font-size:13px; font-weight:600; }
-.src-sub { font-size:11px; color:var(--label3); }
-.src-arrow { font-size:11px; color:var(--label3); }
-
-/* ─── PROGRESS ─── */
-.prog-row { margin-bottom:10px; }
-.prog-meta { display:flex; justify-content:space-between; font-size:11px; color:var(--label2); margin-bottom:5px; }
-.prog-track { height:3px; background:rgba(255,255,255,0.07); border-radius:3px; overflow:hidden; }
-.prog-fill { height:100%; border-radius:3px; }
-
-/* ─── SPINNER ─── */
-.loading { display:flex; flex-direction:column; align-items:center; gap:8px; padding:24px 0; color:var(--label3); font-size:12px; }
-.spin { width:18px; height:18px; border:1.5px solid rgba(255,255,255,0.1); border-top-color:rgba(255,255,255,0.4); border-radius:50%; animation:spin .7s linear infinite; }
-@keyframes spin { to{transform:rotate(360deg)} }
-
-/* ─── REFRESH BTN ─── */
-.refresh-btn {
-  background:rgba(10,132,255,0.14);
-  border:none; border-radius:10px;
-  color:var(--blue); font-size:12px; font-weight:600;
-  padding:7px 14px; cursor:pointer;
-  font-family:-apple-system;
-  -webkit-appearance:none;
+.pitch-card:active{transform:scale(.98)}
+.pitch-card-priority{
+  position:absolute;top:12px;right:12px;
+  font-size:10px;font-weight:700;padding:3px 7px;border-radius:6px;
+  letter-spacing:.04em;text-transform:uppercase;
 }
-.refresh-btn:active { opacity:0.7; }
+.priority-high{background:rgba(255,59,48,0.1);color:var(--red)}
+.priority-med{background:rgba(255,149,0,0.12);color:var(--orange)}
+.priority-niche{background:rgba(175,82,222,0.1);color:var(--purple)}
+.priority-strategic{background:rgba(52,199,89,0.1);color:var(--green)}
 
-@keyframes earthSpin {
-  0%   { transform: rotate(0deg) scale(1); }
-  25%  { transform: rotate(90deg) scale(1.1); }
-  50%  { transform: rotate(180deg) scale(1); }
-  75%  { transform: rotate(270deg) scale(1.1); }
-  100% { transform: rotate(360deg) scale(1); }
+.pitch-card-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-right:70px}
+.pitch-card-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.pitch-card-name{font-size:16px;font-weight:600;color:var(--text)}
+.pitch-card-reach{font-size:12px;color:var(--text2);margin-top:1px}
+.pitch-card-why{font-size:13px;color:var(--text2);line-height:1.55;margin-bottom:10px}
+.pitch-card-products{display:flex;flex-wrap:wrap;gap:5px}
+.pitch-product{background:rgba(0,122,255,0.08);border-radius:6px;padding:3px 8px;font-size:11px;color:var(--blue);font-weight:500}
+
+/* Key pitch angles */
+.angle-card{
+  margin:0 16px 6px;background:var(--card);border-radius:12px;
+  padding:13px 15px;display:flex;align-items:flex-start;gap:10px;
 }
-@keyframes loadBar {
-  0%   { width:0%; margin-left:0; }
-  50%  { width:70%; margin-left:0; }
-  100% { width:0%; margin-left:100%; }
-}
-@keyframes refreshFlash {
-  0%   { opacity:1; }
-  60%  { opacity:1; }
-  100% { opacity:0; }
+.angle-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.angle-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px}
+.angle-body{font-size:12px;color:var(--text2);line-height:1.5}
+
+/* ── BOTTOM CHROME ── */
+.safe-bottom{height:8px}
+.home-indicator{display:flex;justify-content:center;padding:8px 0 6px}
+.home-bar{width:134px;height:5px;background:var(--text);border-radius:3px;opacity:.18}
+
+/* ── DESKTOP FRAME ── */
+@media (min-width:500px){
+  body{display:flex;align-items:flex-start;justify-content:center;background:#e5e5ea;padding:40px 0;min-height:100vh}
+  .app-shell{border-radius:54px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,0.22),0 0 0 10px #1c1c1e,0 0 0 11px #3a3a3c;height:812px}
+  .scroll-area{height:100%}
 }
 </style>
 </head>
 <body>
-<div class="safe-top"></div>
-<div class="page">
 
-  <!-- HEADER -->
-  <div class="header">
-    <div>
-      <div style="font-size:11px;font-weight:500;color:var(--label3);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:3px;">News Intelligence</div>
-      <div class="header-title">Middle East</div>
+<!-- ══════════════════════
+     APP SHELL
+══════════════════════ -->
+<div class="app-shell active" id="app">
+
+  <!-- ═══ TAB PANE 1: PROPERTIES ═══ -->
+  <div class="tab-pane active" id="pane-properties">
+
+    <!-- SCREEN: HOME -->
+    <div class="screen active" id="screen-home">
+      <div class="statusbar"><span class="clock">9:41</span><div class="statusbar-right"><span>●●●</span><div class="battery"><div class="battery-fill"></div></div></div></div>
+      <div class="navbar"><div></div><div class="nav-title"></div><div></div></div>
+      <div class="scroll-area">
+        <div class="large-title">IT <span>Sales Bot</span></div>
+        <div class="source-badge">
+          <div class="source-dot"></div>
+          <div class="source-text">All data from <strong>Marketing Pitch Deck Analysis, 19 Mar</strong> · India Today Group · YouTube Analytics only.</div>
+        </div>
+        <div class="hero-widget" onclick="goToFlow()">
+          <div class="hero-orb"></div><div class="hero-orb2"></div>
+          <div class="hero-eye">Sales Flow</div>
+          <div class="hero-title">Find the right<br>channel fast</div>
+          <div class="hero-sub">18 properties · Tap to start →</div>
+        </div>
+        <div class="widget-2up">
+          <div class="widget-sm" onclick="goToChannel('lallantop')">
+            <div class="widget-sm-icon">⭐</div><div class="widget-sm-val">34.8M</div>
+            <div class="widget-sm-label">Lallantop Subs</div>
+            <div class="widget-sm-badge"><span class="badge badge-blue">Flagship</span></div>
+          </div>
+          <div class="widget-sm" onclick="goToChannel('bihar')">
+            <div class="widget-sm-icon">📈</div><div class="widget-sm-val">+8.52%</div>
+            <div class="widget-sm-label">Bihar Tak YoY</div>
+            <div class="widget-sm-badge"><span class="badge badge-green">Only ↑ Tak</span></div>
+          </div>
+          <div class="widget-sm" onclick="goToChannel('global')">
+            <div class="widget-sm-icon">🌐</div><div class="widget-sm-val">+1433%</div>
+            <div class="widget-sm-label">IT Global YoY</div>
+            <div class="widget-sm-badge"><span class="badge badge-purple">NRI reach</span></div>
+          </div>
+          <div class="widget-sm" onclick="goToChannel('crime')">
+            <div class="widget-sm-icon">🔍</div><div class="widget-sm-val">26.4%</div>
+            <div class="widget-sm-label">Crime Tak Female</div>
+            <div class="widget-sm-badge"><span class="badge badge-orange">Highest F%</span></div>
+          </div>
+        </div>
+        <div class="section-label">Browse by Genre</div>
+        <div class="pill-scroll">
+          <div class="pill selected" onclick="filterGenre('all',this)"><span class="pill-dot" style="background:#007aff"></span>All</div>
+          <div class="pill" onclick="filterGenre('news',this)"><span class="pill-dot" style="background:#32ade6"></span>News</div>
+          <div class="pill" onclick="filterGenre('interest',this)"><span class="pill-dot" style="background:#ff3b30"></span>Interest</div>
+          <div class="pill" onclick="filterGenre('premium',this)"><span class="pill-dot" style="background:#ff9500"></span>Premium</div>
+          <div class="pill" onclick="filterGenre('podcast',this)"><span class="pill-dot" style="background:#af52de"></span>Podcast</div>
+          <div class="pill" onclick="filterGenre('regional',this)"><span class="pill-dot" style="background:#34c759"></span>Regional</div>
+        </div>
+        <div style="height:8px"></div>
+        <div class="card-group" id="channel-list"></div>
+        <div class="safe-bottom"></div>
+      </div>
+    </div><!-- /screen-home -->
+
+    <!-- SCREEN: FLOW -->
+    <div class="screen" id="screen-flow">
+      <div class="statusbar"><span class="clock">9:41</span><div class="statusbar-right"><span>●●●</span><div class="battery"><div class="battery-fill"></div></div></div></div>
+      <div class="navbar">
+        <button class="back-btn" onclick="goBack('screen-home')"><svg viewBox="0 0 10 17" fill="none"><path d="M9 1L1 8.5L9 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</button>
+        <div class="nav-title">Bot Flow</div><div></div>
+      </div>
+      <div class="scroll-area">
+        <div class="large-title">How it<br><span>works</span></div>
+        <div class="section-label">Step by step</div>
+        <div class="flow-card"><div class="flow-num blue">1</div><div class="flow-title">Advertiser enters</div><div class="flow-sub">Via sales team link, website widget, WhatsApp, or QR at events</div></div>
+        <div class="flow-card">
+          <div class="flow-num blue">2</div><div class="flow-title">Intent detection</div>
+          <div class="flow-sub">Bot identifies goal via multi-choice or free text</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px">
+            <span class="badge badge-blue">Brand awareness</span><span class="badge badge-blue">Lead gen</span><span class="badge badge-blue">Geo reach</span><span class="badge badge-blue">Sponsorship</span>
+          </div>
+        </div>
+        <div class="flow-card"><div class="flow-num orange">3</div><div class="flow-title">Qualify geography + category</div><div class="flow-sub">National or state-specific? Which genre? Two questions, instant shortlist.</div></div>
+        <div class="flow-card"><div class="flow-num orange">4</div><div class="flow-title">Channel match</div><div class="flow-sub">Bot recommends best-fit property with subscriber count, TG split, and competitor landscape</div></div>
+        <div class="flow-card">
+          <div class="flow-num orange">5</div><div class="flow-title">Format selection</div>
+          <div class="flow-sub">Pre-roll, branded segment, sponsorship, custom video, events, website inventory</div>
+        </div>
+        <div class="flow-card"><div class="flow-num green">6</div><div class="flow-title">Proposal generated</div><div class="flow-sub">Auto-built pitch with channel data, TG breakdown, format, and pricing — ready to send</div></div>
+        <div class="flow-card"><div class="flow-num green">7</div><div class="flow-title">CRM handoff + follow-up</div><div class="flow-sub">Lead logged. 48hr auto-reminder if no advertiser response.</div></div>
+        <div class="data-source"><div class="data-source-text"><strong>📄 Source:</strong> Marketing Pitch Deck Analysis, 19 Mar · India Today Group · YT Analytics FY25-26</div></div>
+        <div class="safe-bottom"></div>
+      </div>
+    </div><!-- /screen-flow -->
+
+    <!-- SCREEN: CHANNEL DETAIL -->
+    <div class="screen" id="screen-detail">
+      <div class="statusbar"><span class="clock">9:41</span><div class="statusbar-right"><span>●●●</span><div class="battery"><div class="battery-fill"></div></div></div></div>
+      <div class="navbar">
+        <button class="back-btn" onclick="goBack('screen-home')"><svg viewBox="0 0 10 17" fill="none"><path d="M9 1L1 8.5L9 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</button>
+        <div class="nav-title" id="detail-nav-title">Channel</div><div></div>
+      </div>
+      <div class="scroll-area"><div id="detail-content"></div></div>
+    </div><!-- /screen-detail -->
+
+  </div><!-- /pane-properties -->
+
+  <!-- ═══ TAB PANE 2: ADVERTISER INTEL ═══ -->
+  <div class="tab-pane" id="pane-advertiser">
+
+    <!-- SCREEN: ADVERTISER LIST -->
+    <div class="screen active" id="screen-adv-list">
+      <div class="statusbar"><span class="clock">9:41</span><div class="statusbar-right"><span>●●●</span><div class="battery"><div class="battery-fill"></div></div></div></div>
+      <div class="navbar"><div></div><div class="nav-title">Advertiser Intel</div><div></div></div>
+      <div class="scroll-area">
+        <div class="large-title">Pitch<br><span>Intelligence</span></div>
+        <div class="source-badge">
+          <div class="source-dot"></div>
+          <div class="source-text">Gap analysis basis <strong>Feb '26 Advertising Data</strong> · ITGD Property Deck · Missed Advertiser Sheet</div>
+        </div>
+        <div class="section-label">Active Advertisers</div>
+        <div class="card-group">
+          <div class="card-row" onclick="goToAdvertiser('dabur')">
+            <div class="card-icon" style="background:rgba(255,149,0,0.12)">🌿</div>
+            <div class="card-row-content">
+              <div class="card-row-title">Dabur India</div>
+              <div class="card-row-sub">FMCG · Health · Ayurveda · Feb '26</div>
+            </div>
+            <div class="card-row-right">
+              <span class="badge badge-red">Gaps found</span>
+              <span class="chevron">›</span>
+            </div>
+          </div>
+        </div>
+        <div class="section-label">Coming Soon</div>
+        <div class="card-group">
+          <div class="card-row" style="opacity:.45;cursor:default">
+            <div class="card-icon" style="background:rgba(0,0,0,0.05)">➕</div>
+            <div class="card-row-content">
+              <div class="card-row-title">Add Advertiser</div>
+              <div class="card-row-sub">Upload pitch PDF to analyse gaps</div>
+            </div>
+          </div>
+        </div>
+        <div class="safe-bottom"></div>
+      </div>
+    </div><!-- /screen-adv-list -->
+
+    <!-- SCREEN: ADVERTISER DETAIL (Dabur) -->
+    <div class="screen" id="screen-adv-dabur">
+      <div class="statusbar"><span class="clock">9:41</span><div class="statusbar-right"><span>●●●</span><div class="battery"><div class="battery-fill"></div></div></div></div>
+      <div class="navbar">
+        <button class="back-btn" onclick="goBackAdv('screen-adv-list')"><svg viewBox="0 0 10 17" fill="none"><path d="M9 1L1 8.5L9 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</button>
+        <div class="nav-title">Dabur India</div><div></div>
+      </div>
+      <div class="scroll-area">
+
+        <!-- Hero -->
+        <div class="adv-hero">
+          <div class="adv-hero-orb"></div><div class="adv-hero-orb2"></div>
+          <div class="adv-hero-tag">Advertiser · Feb '26 Report</div>
+          <div class="adv-hero-name">Dabur India</div>
+          <div class="adv-hero-sub">FMCG · Health · Ayurveda portfolio<br>Active in broadcast South, Print UP/MH/WB</div>
+          <div class="adv-hero-products">
+            <span class="adv-product-tag">Chyawanprash</span>
+            <span class="adv-product-tag">Honey</span>
+            <span class="adv-product-tag">Hajmola</span>
+            <span class="adv-product-tag">Red Toothpaste</span>
+            <span class="adv-product-tag">Dabur Amla</span>
+            <span class="adv-product-tag">Real Juice</span>
+            <span class="adv-product-tag">OTC Healthcare</span>
+          </div>
+        </div>
+
+        <!-- Segment control -->
+        <div class="segment-wrap" style="margin-top:4px">
+          <div class="segment" style="grid-template-columns:repeat(3,1fr)">
+            <div class="seg-btn active" onclick="switchAdvSeg(this,'adv-seg-gaps')">Gaps</div>
+            <div class="seg-btn" onclick="switchAdvSeg(this,'adv-seg-pitch')">Pitch Now</div>
+            <div class="seg-btn" onclick="switchAdvSeg(this,'adv-seg-angles')">Angles</div>
+          </div>
+        </div>
+
+        <!-- SEG: GAPS (current presence map) -->
+        <div id="adv-seg-gaps">
+          <div class="section-label" style="padding-top:4px">Where Dabur is active now</div>
+
+          <!-- Broadcast Active -->
+          <div class="presence-row">
+            <div class="presence-header">
+              <div class="presence-title">Broadcast — South (Active)</div>
+              <div class="presence-sub">Duration in seconds · Feb '26</div>
+            </div>
+            <div class="presence-item">
+              <div class="presence-dot active"></div>
+              <div class="presence-channel">Tamil Broadcast</div>
+              <div class="presence-value active">6,195 sec</div>
+            </div>
+            <div class="presence-item">
+              <div class="presence-dot active"></div>
+              <div class="presence-channel">Telugu Broadcast</div>
+              <div class="presence-value active">5,305 sec</div>
+            </div>
+            <div class="presence-item">
+              <div class="presence-dot active"></div>
+              <div class="presence-channel">Kannada Broadcast</div>
+              <div class="presence-value active">2,380 sec</div>
+            </div>
+          </div>
+
+          <!-- Print Active -->
+          <div class="presence-row">
+            <div class="presence-header">
+              <div class="presence-title">Print Markets (Active)</div>
+              <div class="presence-sub">SqCm · Feb '26</div>
+            </div>
+            <div class="presence-item">
+              <div class="presence-dot active"></div>
+              <div class="presence-channel">Uttar Pradesh Print</div>
+              <div class="presence-value active">24,419 sqcm</div>
+            </div>
+            <div class="presence-item">
+              <div class="presence-dot active"></div>
+              <div class="presence-channel">Maharashtra Print</div>
+              <div class="presence-value active">15,380 sqcm</div>
+            </div>
+            <div class="presence-item">
+              <div class="presence-dot active"></div>
+              <div class="presence-channel">West Bengal Print</div>
+              <div class="presence-value active">1,485 sqcm</div>
+            </div>
+          </div>
+
+          <!-- ITGD Programmatic (partial) -->
+          <div class="presence-row">
+            <div class="presence-header">
+              <div class="presence-title">ITGD Digital (Partial)</div>
+              <div class="presence-sub">Impressions · Feb '26</div>
+            </div>
+            <div class="presence-item">
+              <div class="presence-dot partial"></div>
+              <div class="presence-channel">ITGD Programmatic / Ad Network</div>
+              <div class="presence-value partial">4,935 impr.</div>
+            </div>
+            <div class="presence-item">
+              <div class="presence-dot partial"></div>
+              <div class="presence-channel">AajTak TV / CTV</div>
+              <div class="presence-value partial">140 impr.</div>
+            </div>
+            <div class="presence-item">
+              <div class="presence-dot partial"></div>
+              <div class="presence-channel">Linear / CTV (Non-ITGD National)</div>
+              <div class="presence-value partial">140 impr.</div>
+            </div>
+          </div>
+
+          <!-- WB Regional (active but not ITGD) -->
+          <div class="presence-row">
+            <div class="presence-header">
+              <div class="presence-title">West Bengal Regional TV</div>
+              <div class="presence-sub">Not on AajTak Bangla Digital</div>
+            </div>
+            <div class="presence-item">
+              <div class="presence-dot partial"></div>
+              <div class="presence-channel">WB Regional TV (non-ITGD)</div>
+              <div class="presence-value partial">795 sec</div>
+            </div>
+            <div class="presence-item">
+              <div class="presence-dot missing"></div>
+              <div class="presence-channel">AajTak Bangla Digital</div>
+              <div class="presence-value missing">ZERO</div>
+            </div>
+          </div>
+
+          <!-- KEY GAPS -->
+          <div class="section-label">Critical gaps to pitch</div>
+
+          <div class="gap-grid">
+            <div class="gap-card">
+              <div class="gap-card-accent" style="background:var(--red)"></div>
+              <div class="gap-card-label">Hindi Digital Competition</div>
+              <div class="gap-card-val">41,136</div>
+              <div class="gap-card-sub">Competitor impressions on Hindi digital. Zero on AajTak Digital.</div>
+            </div>
+            <div class="gap-card">
+              <div class="gap-card-accent" style="background:var(--red)"></div>
+              <div class="gap-card-label">Eng + Hindi Competition</div>
+              <div class="gap-card-val">41,136</div>
+              <div class="gap-card-sub">Active on competition digital. Not on ITGD Direct.</div>
+            </div>
+            <div class="gap-card">
+              <div class="gap-card-accent" style="background:var(--orange)"></div>
+              <div class="gap-card-label">AajTak Digital</div>
+              <div class="gap-card-val">ZERO</div>
+              <div class="gap-card-sub">On AajTak TV/CTV (140 impr.) but absent on AajTak Digital.</div>
+            </div>
+            <div class="gap-card">
+              <div class="gap-card-accent" style="background:var(--orange)"></div>
+              <div class="gap-card-label">Malayalam Digital</div>
+              <div class="gap-card-val">ZERO</div>
+              <div class="gap-card-sub">Active Tamil & Telugu broadcast. IT Malayalam = clear gap.</div>
+            </div>
+          </div>
+
+          <div class="data-source"><div class="data-source-text"><strong>📄 Source:</strong> Dabur India Pitch Suggestion PDF · Feb '26 Advertising Data · ITGD Property Deck Analysis</div></div>
+        </div><!-- /adv-seg-gaps -->
+
+        <!-- SEG: PITCH NOW (recommended properties) -->
+        <div id="adv-seg-pitch" style="display:none">
+          <div class="section-label" style="padding-top:4px">Recommended ITGD Properties</div>
+
+          <!-- Priority -->
+          <div class="pitch-card">
+            <div class="pitch-card-priority priority-high">🔴 Priority</div>
+            <div class="pitch-card-top">
+              <div class="pitch-card-icon" style="background:rgba(0,122,255,0.1)">📱</div>
+              <div>
+                <div class="pitch-card-name">AajTak Digital</div>
+                <div class="pitch-card-reach">74.8M subs · 4,376M views FY26</div>
+              </div>
+            </div>
+            <div class="pitch-card-why">Active on AajTak TV/CTV (140 impr.) but ZERO on AajTak Digital. 41,136 competition impressions on Hindi digital not on AT Digital — massive untapped gap. Audience: 25–44 yrs, Male 86%, 95%+ India.</div>
+            <div class="pitch-card-products">
+              <span class="pitch-product">Chyawanprash</span><span class="pitch-product">Honey</span><span class="pitch-product">Hajmola</span><span class="pitch-product">Lal Dant Manjan</span>
+            </div>
+          </div>
+
+          <div class="pitch-card">
+            <div class="pitch-card-priority priority-high">🔴 Priority</div>
+            <div class="pitch-card-top">
+              <div class="pitch-card-icon" style="background:rgba(0,122,255,0.08)">🏛️</div>
+              <div>
+                <div class="pitch-card-name">ITGD Programmatic / Direct</div>
+                <div class="pitch-card-reach">11.1M YT subs · 791M views FY26</div>
+              </div>
+            </div>
+            <div class="pitch-card-why">Already active on ITGD Programmatic (4,935 impr.) — clear upsell to premium Direct & Programmatic Direct. 122M users align with urban FMCG TG. Health360 content = brand-safe adjacency.</div>
+            <div class="pitch-card-products">
+              <span class="pitch-product">Chyawanprash</span><span class="pitch-product">Real Juice</span><span class="pitch-product">Honey</span>
+            </div>
+          </div>
+
+          <div class="pitch-card">
+            <div class="pitch-card-priority priority-high">🔴 Priority</div>
+            <div class="pitch-card-top">
+              <div class="pitch-card-icon" style="background:rgba(52,199,89,0.1)">💚</div>
+              <div>
+                <div class="pitch-card-name">Health Wealth</div>
+                <div class="pitch-card-reach">20.1K subs · 5M views · New Dec '25</div>
+              </div>
+            </div>
+            <div class="pitch-card-why">Single most aligned property. Covers preventive wellness, immunity, conscious eating, expert health content. Audience: 25–34 yrs (47%), 91% India, premium urban. Integration as health knowledge partner — not just an ad.</div>
+            <div class="pitch-card-products">
+              <span class="pitch-product">Chyawanprash</span><span class="pitch-product">Honey</span><span class="pitch-product">Pudin Hara</span><span class="pitch-product">Giloy</span><span class="pitch-product">OTC Healthcare</span>
+            </div>
+          </div>
+
+          <div class="pitch-card">
+            <div class="pitch-card-priority priority-high">🔴 Priority</div>
+            <div class="pitch-card-top">
+              <div class="pitch-card-icon" style="background:rgba(52,199,89,0.1)">🌿</div>
+              <div>
+                <div class="pitch-card-name">AajTak Bangla</div>
+                <div class="pitch-card-reach">3.4M subs · 585M views FY26</div>
+              </div>
+            </div>
+            <div class="pitch-card-why">795 sec on WB Regional TV but ZERO on AajTak Bangla Digital. WB is key print market (1,485 sqcm) — same audience reachable digitally with attribution. Shifts unmeasurable TV spend to measurable digital ROI.</div>
+            <div class="pitch-card-products">
+              <span class="pitch-product">Chyawanprash</span><span class="pitch-product">Honey</span><span class="pitch-product">Dabur Amla</span>
+            </div>
+          </div>
+
+          <div class="pitch-card">
+            <div class="pitch-card-priority priority-high">🔴 Priority</div>
+            <div class="pitch-card-top">
+              <div class="pitch-card-icon" style="background:rgba(50,173,230,0.1)">🏙️</div>
+              <div>
+                <div class="pitch-card-name">UP Tak / News TAKs</div>
+                <div class="pitch-card-reach">11.8M subs (UP) · 3,970M views (all TAKs)</div>
+              </div>
+            </div>
+            <div class="pitch-card-why">UP = Dabur's #1 print market (24,419 sqcm), Maharashtra #2 (15,380). TAKs reach same geographies digitally. UP Tak & Bihar Tak explicitly list Dabur as potential advertiser in their decks.</div>
+            <div class="pitch-card-products">
+              <span class="pitch-product">Dabur Red</span><span class="pitch-product">Honey</span><span class="pitch-product">Lal Tail</span>
+            </div>
+          </div>
+
+          <div class="pitch-card">
+            <div class="pitch-card-priority priority-high">🔴 Priority</div>
+            <div class="pitch-card-top">
+              <div class="pitch-card-icon" style="background:rgba(175,82,222,0.1)">📱</div>
+              <div>
+                <div class="pitch-card-name">MO of Everything</div>
+                <div class="pitch-card-reach">477K IG · 144K YT · 180M views FY26</div>
+              </div>
+            </div>
+            <div class="pitch-card-why">Editorial focus on health, wellness & lifestyle = most direct content fit for Dabur OTC & premium portfolio. Audience: Urban 25–45 yrs, SEC A/B. Natural upsell from existing ITGD Programmatic already active.</div>
+            <div class="pitch-card-products">
+              <span class="pitch-product">Chyawanprash</span><span class="pitch-product">Honey</span><span class="pitch-product">Giloy</span><span class="pitch-product">Real Juice</span>
+            </div>
+          </div>
+
+          <!-- Strategic -->
+          <div class="pitch-card">
+            <div class="pitch-card-priority priority-strategic">🟢 Strategic</div>
+            <div class="pitch-card-top">
+              <div class="pitch-card-icon" style="background:rgba(255,149,0,0.1)">⭐</div>
+              <div>
+                <div class="pitch-card-name">The Lallantop</div>
+                <div class="pitch-card-reach">34.8M subs · 1.88B views FY26</div>
+              </div>
+            </div>
+            <div class="pitch-card-why">34.8M subs, 25–34 yrs core (43%), 85% male — younger Hindi-speaking audience Dabur needs for long-term loyalty. Sehat segment (Mon–Fri, 1PM) — native integration for immunity & Ayurveda range.</div>
+            <div class="pitch-card-products">
+              <span class="pitch-product">Sehat segment</span><span class="pitch-product">Chyawanprash</span><span class="pitch-product">OTC</span>
+            </div>
+          </div>
+
+          <div class="pitch-card">
+            <div class="pitch-card-priority priority-strategic">🟢 Strategic</div>
+            <div class="pitch-card-top">
+              <div class="pitch-card-icon" style="background:rgba(255,59,48,0.08)">🎭</div>
+              <div>
+                <div class="pitch-card-name">Saas Bahu Aur Betiyaan</div>
+                <div class="pitch-card-reach">8.3M subs · 539M views FY26</div>
+              </div>
+            </div>
+            <div class="pitch-card-why">Rare 50/50 male-female split. 18–34 yrs dominant. Direct fit for Dabur Amla Hair Oil, Vatika, Fem & skincare lines. TV-to-digital upgrade for Dabur's existing women-centric media buy.</div>
+            <div class="pitch-card-products">
+              <span class="pitch-product">Dabur Amla</span><span class="pitch-product">Vatika</span><span class="pitch-product">Fem</span>
+            </div>
+          </div>
+
+          <div class="pitch-card">
+            <div class="pitch-card-priority priority-strategic">🟢 Strategic</div>
+            <div class="pitch-card-top">
+              <div class="pitch-card-icon" style="background:rgba(52,199,89,0.1)">🌾</div>
+              <div>
+                <div class="pitch-card-name">Kisan Tak</div>
+                <div class="pitch-card-reach">1.1M subs · 57M views FY26</div>
+              </div>
+            </div>
+            <div class="pitch-card-why">98% India, rural-first, Hindi belt, 25–44 yrs — Dabur's rural consumer base. Reaches OTC buyers at rural kirana level. Low-competition, brand-safe agri news format.</div>
+            <div class="pitch-card-products">
+              <span class="pitch-product">Honey</span><span class="pitch-product">Lal Dant Manjan</span><span class="pitch-product">Hajmola</span><span class="pitch-product">Pudin Hara</span>
+            </div>
+          </div>
+
+          <!-- Niche -->
+          <div class="pitch-card">
+            <div class="pitch-card-priority priority-niche">🟣 Niche</div>
+            <div class="pitch-card-top">
+              <div class="pitch-card-icon" style="background:rgba(175,82,222,0.1)">🎙️</div>
+              <div>
+                <div class="pitch-card-name">Teen Taal Podcast</div>
+                <div class="pitch-card-reach">496K subs · 15M views · +118% YoY</div>
+              </div>
+            </div>
+            <div class="pitch-card-why">Fastest-growing property. Unscripted comedy + live events (10K+ attendees). Playful, family-friendly fit for Hajmola, Real Drinks, Honey. Native podcast ads avoid video ad-fatigue.</div>
+            <div class="pitch-card-products">
+              <span class="pitch-product">Hajmola</span><span class="pitch-product">Real Drinks</span><span class="pitch-product">Honey</span>
+            </div>
+          </div>
+
+          <div class="pitch-card">
+            <div class="pitch-card-priority priority-strategic">🟢 Strategic</div>
+            <div class="pitch-card-top">
+              <div class="pitch-card-icon" style="background:rgba(50,173,230,0.1)">🌴</div>
+              <div>
+                <div class="pitch-card-name">IT Malayalam</div>
+                <div class="pitch-card-reach">59.7K subs · Kerala + Gulf NRI</div>
+              </div>
+            </div>
+            <div class="pitch-card-why">Kerala = highest per-capita FMCG consumption + deep Ayurveda culture. Dabur active Tamil (6,195 sec) & Telugu (5,305 sec) — Malayalam digital is a clear gap. First-mover advantage.</div>
+            <div class="pitch-card-products">
+              <span class="pitch-product">Chyawanprash</span><span class="pitch-product">Honey</span><span class="pitch-product">Pudin Hara</span><span class="pitch-product">Giloy</span>
+            </div>
+          </div>
+
+          <div class="pitch-card">
+            <div class="pitch-card-priority priority-strategic">🟢 Strategic</div>
+            <div class="pitch-card-top">
+              <div class="pitch-card-icon" style="background:rgba(50,173,230,0.1)">🏔️</div>
+              <div>
+                <div class="pitch-card-name">IT North East</div>
+                <div class="pitch-card-reach">225K subs · 7 Sister States</div>
+              </div>
+            </div>
+            <div class="pitch-card-why">High-growth, underpenetrated FMCG market. Only credible national media house with dedicated NE digital presence. Dabur has ZERO NE digital presence — early-entry opportunity.</div>
+            <div class="pitch-card-products">
+              <span class="pitch-product">Lal Dant Manjan</span><span class="pitch-product">Hajmola</span><span class="pitch-product">Honey</span>
+            </div>
+          </div>
+
+          <div class="pitch-card">
+            <div class="pitch-card-priority priority-niche">🟣 Niche</div>
+            <div class="pitch-card-top">
+              <div class="pitch-card-icon" style="background:rgba(175,82,222,0.1)">🌐</div>
+              <div>
+                <div class="pitch-card-name">IT Global</div>
+                <div class="pitch-card-reach">160K subs · US, UK, UAE, Canada, AU</div>
+              </div>
+            </div>
+            <div class="pitch-card-why">Affluent Indian diaspora — high disposable income, already buys Dabur internationally. Minimal Indian FMCG competition. NRI consumers influence purchase decisions back home.</div>
+            <div class="pitch-card-products">
+              <span class="pitch-product">Chyawanprash</span><span class="pitch-product">Real Juice</span><span class="pitch-product">Vatika Hair Oil</span>
+            </div>
+          </div>
+
+          <div class="pitch-card">
+            <div class="pitch-card-priority" style="background:rgba(0,122,255,0.08);color:var(--blue);position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;padding:3px 7px;border-radius:6px;letter-spacing:.04em;text-transform:uppercase">⬆ Upsell</div>
+            <div class="pitch-card-top">
+              <div class="pitch-card-icon" style="background:rgba(0,122,255,0.08)">📺</div>
+              <div>
+                <div class="pitch-card-name">CTV Inventory (ITGD)</div>
+                <div class="pitch-card-reach">50M+ CTV homes · 30% YoY growth</div>
+              </div>
+            </div>
+            <div class="pitch-card-why">Active on TVTN Linear/CTV (140 impr.) but absent on ITGD CTV. Co-viewing families on smart TVs = multiple purchase decision-makers per household. ITGD is #1 in news genre on CTV.</div>
+            <div class="pitch-card-products">
+              <span class="pitch-product">Chyawanprash</span><span class="pitch-product">Real Juice</span>
+            </div>
+          </div>
+
+          <div class="data-source"><div class="data-source-text"><strong>📄 Source:</strong> Dabur India Pitch Suggestion PDF · Feb '26 Advertising Data · ITGD Property Deck</div></div>
+        </div><!-- /adv-seg-pitch -->
+
+        <!-- SEG: ANGLES -->
+        <div id="adv-seg-angles" style="display:none">
+          <div class="section-label" style="padding-top:4px">Key pitch angles</div>
+
+          <div class="angle-card">
+            <div class="angle-icon">🔴</div>
+            <div><div class="angle-title">AajTak TV → AajTak Digital upsell</div><div class="angle-body">Active on AajTak TV/CTV (140 impr.) but absent on AajTak Digital — direct revenue gap, easy TV-to-digital conversion story.</div></div>
+          </div>
+          <div class="angle-card">
+            <div class="angle-icon">⚔️</div>
+            <div><div class="angle-title">41,136 competition impressions</div><div class="angle-body">41,136 impressions active on Hindi digital competition — not on AajTak Digital. Risk of being outpaced by rivals in core Hindi-belt digital.</div></div>
+          </div>
+          <div class="angle-card">
+            <div class="angle-icon">💚</div>
+            <div><div class="angle-title">Health Wealth = Dabur's product universe</div><div class="angle-body">Single property that covers preventive wellness, immunity & Ayurveda. Entire Dabur portfolio maps directly. Integration as health knowledge partner, not just ad placement.</div></div>
+          </div>
+          <div class="angle-card">
+            <div class="angle-icon">🗺️</div>
+            <div><div class="angle-title">Geo: print → digital same audience</div><div class="angle-body">UP (24,419 sqcm print) + UP Tak/Lallantop = same 25–44 yrs Hindi-belt audience, now deliverable digitally with attribution and measurement.</div></div>
+          </div>
+          <div class="angle-card">
+            <div class="angle-icon">🌿</div>
+            <div><div class="angle-title">West Bengal: TV → AajTak Bangla bridge</div><div class="angle-body">795 sec on WB Regional TV + 1,485 sqcm WB Print. AajTak Bangla Digital = same Bengali audience, measurable ROI, zero current presence.</div></div>
+          </div>
+          <div class="angle-card">
+            <div class="angle-icon">👩</div>
+            <div><div class="angle-title">Women: Saas Bahu + Amla/Vatika fit</div><div class="angle-body">Only ITGD property with 50/50 gender split. Perfect bridge for Dabur Amla Hair Oil, Vatika, Fem — existing women-centric TV buy going digital.</div></div>
+          </div>
+          <div class="angle-card">
+            <div class="angle-icon">🌾</div>
+            <div><div class="angle-title">Rural: Kisan Tak → OTC & Honey</div><div class="angle-body">98% India, rural-first. Reaches kirana-level OTC buyers for Honey, Lal Tail, Pudin Hara, Hajmola at high purchase frequency.</div></div>
+          </div>
+          <div class="angle-card">
+            <div class="angle-icon">📺</div>
+            <div><div class="angle-title">Linear CTV → ITGD CTV upgrade</div><div class="angle-body">Active on Linear/CTV (140 impr.) but absent on ITGD CTV. Upgrade unlocks digital measurement, family co-viewing, and #1 news genre positioning on smart TVs.</div></div>
+          </div>
+          <div class="angle-card">
+            <div class="angle-icon">🌴</div>
+            <div><div class="angle-title">South gap: Tamil/Telugu active, Malayalam missing</div><div class="angle-body">6,195 sec Tamil + 5,305 sec Telugu broadcast active. Kerala = highest per-capita FMCG consumption + Ayurveda culture. IT Malayalam = first-mover advantage.</div></div>
+          </div>
+          <div class="angle-card">
+            <div class="angle-icon">🏔️</div>
+            <div><div class="angle-title">NE: underpenetrated FMCG, zero competition</div><div class="angle-body">Dabur has zero NE digital presence. IT NE is the only credible national media house with dedicated NE digital — brand-safe, uncontested environment.</div></div>
+          </div>
+          <div class="angle-card">
+            <div class="angle-icon">🌐</div>
+            <div><div class="angle-title">Diaspora: IT Global → NRI Ayurveda trust</div><div class="angle-body">Affluent Indian diaspora (US, UK, UAE) already buys Dabur internationally. NRI consumers influence purchase decisions back home. Minimal FMCG competition on IT Global.</div></div>
+          </div>
+
+          <div class="data-source"><div class="data-source-text"><strong>📄 Source:</strong> Dabur India Pitch Suggestion PDF · Feb '26 Advertising Data · ITGD Deck Analysis · Prepared March 2026</div></div>
+        </div><!-- /adv-seg-angles -->
+
+        <div class="safe-bottom"></div>
+      </div>
+    </div><!-- /screen-adv-dabur -->
+
+  </div><!-- /pane-advertiser -->
+
+  <!-- ═══ TAB BAR ═══ -->
+  <div class="tabbar">
+    <div class="tab-item active" id="tab-properties" onclick="switchTab('properties')">
+      <div class="tab-icon">📺</div>
+      <div class="tab-label">Properties</div>
     </div>
-    <div class="header-right">
-      <div class="live-pill"><div class="live-dot"></div>Live</div>
-      <div id="clock"></div>
-      <button onclick="shareApp()" style="background:rgba(10,132,255,0.15);border:1px solid rgba(10,132,255,0.25);border-radius:20px;padding:4px 11px;font-size:11px;font-weight:600;color:var(--blue);font-family:-apple-system;cursor:pointer;-webkit-appearance:none;">⬆ Share</button>
+    <div class="tab-item" id="tab-advertiser" onclick="switchTab('advertiser')">
+      <div class="tab-icon">🎯</div>
+      <div class="tab-label">Advertiser Intel</div>
     </div>
   </div>
 
-  <!-- TICKER -->
-  <div class="ticker">
-    <div class="ticker-tag">Breaking</div>
-    <div class="ticker-scroll">
-      <div class="ticker-inner" id="ticker">
-        <span>Loading feeds…</span><span>Loading feeds…</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- GRID -->
-  <div class="grid">
-
-    <!-- STAT: Zones -->
-    <div class="w w-red c-red">
-      <div class="wl"><div class="wl-icon">⚔</div>Zones</div>
-      <div class="stat-num">7</div>
-      <div class="stat-desc">Active theaters</div>
-    </div>
-
-    <!-- STAT: Incidents -->
-    <div class="w w-orange c-orange">
-      <div class="wl"><div class="wl-icon">⚡</div>Incidents</div>
-      <div class="stat-num" id="s-inc">—</div>
-      <div class="stat-desc">Reported today</div>
-    </div>
-
-    <!-- STAT: Sources -->
-    <div class="w w-green c-green">
-      <div class="wl"><div class="wl-icon">📡</div>Sources</div>
-      <div class="stat-num" id="s-src">5</div>
-      <div class="stat-desc">Feeds active</div>
-    </div>
-
-    <!-- STAT: Sync + Countdown -->
-    <div class="w w-blue c-blue" id="sync-widget">
-      <div class="wl"><div class="wl-icon">🕐</div>Next Update</div>
-      <div class="stat-num" id="s-countdown" style="font-size:28px;padding-top:6px;letter-spacing:-1px;">5:00</div>
-      <div style="margin-top:6px;">
-        <div style="height:2px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;">
-          <div id="s-progress" style="height:100%;width:100%;background:var(--blue);border-radius:2px;transition:width 1s linear;"></div>
-        </div>
-      </div>
-      <div class="stat-desc" style="margin-top:4px;" id="s-sync-time">—</div>
-    </div>
-
-    <!-- THREAT LEVELS full -->
-    <div class="w w-full" style="animation-delay:.16s">
-      <div class="wl"><div class="wl-icon" style="background:rgba(255,69,58,0.18);color:var(--red);">🔴</div>Threat Levels</div>
-      <div class="zone-list">
-        <div class="zone-row">
-          <div class="z-left"><div class="zdot zdot-r"></div><div><div class="z-name">Gaza / West Bank</div><div class="z-sub">IDF — Hamas</div></div></div>
-          <div class="zbadge zb-r">Critical</div>
-        </div>
-        <div class="zone-row">
-          <div class="z-left"><div class="zdot zdot-r" style="animation-delay:.3s"></div><div><div class="z-name">Lebanon</div><div class="z-sub">IDF — Hezbollah</div></div></div>
-          <div class="zbadge zb-r">Critical</div>
-        </div>
-        <div class="zone-row">
-          <div class="z-left"><div class="zdot zdot-o"></div><div><div class="z-name">Yemen</div><div class="z-sub">Houthi — US/Saudi</div></div></div>
-          <div class="zbadge zb-o">High</div>
-        </div>
-        <div class="zone-row">
-          <div class="z-left"><div class="zdot zdot-o"></div><div><div class="z-name">Syria</div><div class="z-sub">Post-Assad</div></div></div>
-          <div class="zbadge zb-o">High</div>
-        </div>
-        <div class="zone-row">
-          <div class="z-left"><div class="zdot zdot-o"></div><div><div class="z-name">Iran</div><div class="z-sub">Nuclear / Proxy</div></div></div>
-          <div class="zbadge zb-o">High</div>
-        </div>
-        <div class="zone-row">
-          <div class="z-left"><div class="zdot zdot-y"></div><div><div class="z-name">Iraq</div><div class="z-sub">PMF / US Bases</div></div></div>
-          <div class="zbadge zb-y">Elevated</div>
-        </div>
-        <div class="zone-row">
-          <div class="z-left"><div class="zdot zdot-g"></div><div><div class="z-name">Hormuz Strait</div><div class="z-sub">Naval Tension</div></div></div>
-          <div class="zbadge zb-g">Watch</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- NEWS FEED full -->
-    <div class="w w-full" style="animation-delay:.20s">
-      <div class="wl" style="justify-content:space-between;">
-        <span style="display:flex;align-items:center;gap:5px;"><div class="wl-icon" style="background:rgba(255,159,10,0.18);color:var(--orange);">📰</div>Live Feed</span>
-        <span style="display:flex;align-items:center;gap:8px;">
-          <span id="refresh-indicator" style="display:none;font-size:9px;font-weight:600;color:var(--green);letter-spacing:0.5px;animation:refreshFlash 1.5s ease-out forwards;">● UPDATED</span>
-          <span id="feed-count" style="font-size:10px;font-weight:500;color:var(--label3);">—</span>
-        </span>
-      </div>
-      <div class="news-list" id="news-feed">
-        <div class="loading"><div class="spin"></div><span>Fetching…</span></div>
-      </div>
-    </div>
-
-    <!-- MAP full — Leaflet + OSM tiles (same engine as free-map.org) -->
-    <div class="w w-full" style="animation-delay:.24s; padding:14px; overflow:visible !important;">
-      <div class="wl" style="margin-bottom:12px;">
-        <div class="wl-icon" style="background:rgba(90,200,250,0.18);color:var(--teal);">🗺</div>
-        Theater Map — Satellite
-        <span style="margin-left:auto;font-size:10px;color:var(--label3);">ESRI World Imagery</span>
-      </div>
-
-      <!-- Leaflet map container — explicit size so Leaflet can measure it -->
-      <div id="leaflet-map" style="width:100%;height:420px;border-radius:16px;overflow:hidden;z-index:0;display:block;position:relative;background:#0d1814;"></div>
-
-      <!-- Topographic fallback — shown only when offline -->
-      <div id="map-fallback" style="display:none;border-radius:16px;overflow:hidden;position:relative;margin-top:0;">
-        <div style="position:relative;width:100%;height:420px;background:#0d1814;border-radius:16px;overflow:hidden;">
-          <img src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?bbox=25,10,65,42&bboxSR=4326&size=800,600&f=image&format=jpg"
-            style="width:100%;height:100%;object-fit:cover;display:block;border-radius:16px;"
-            alt="Middle East topographic map"
-          />
-          <svg viewBox="0 0 100 100" preserveAspectRatio="none"
-            style="position:absolute;inset:0;width:100%;height:100%;overflow:visible;border-radius:16px;">
-            <defs>
-              <filter id="gs4"><feDropShadow dx="0" dy="0" stdDeviation="1.2" flood-color="rgba(0,0,0,1)"/></filter>
-              <filter id="gr4"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            </defs>
-            <circle cx="23.5" cy="33.1" r="3.5" fill="#ff453a" opacity="0.2"><animate attributeName="r" values="3;9;3" dur="1.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.3;0;0.3" dur="1.8s" repeatCount="indefinite"/></circle>
-            <circle cx="23.5" cy="33.1" r="2.2" fill="#ff453a" stroke="white" stroke-width="0.7" filter="url(#gr4)" class="map-zone" data-zone="GAZA"/>
-            <text x="23.5" y="39.5" fill="white" font-size="2.8" font-family="-apple-system" font-weight="700" text-anchor="middle" filter="url(#gs4)" class="map-zone" data-zone="GAZA">GAZA</text>
-            <circle cx="26.2" cy="25.3" r="2.5" fill="#ff453a" opacity="0.2"><animate attributeName="r" values="2;7;2" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.3;0;0.3" dur="2s" repeatCount="indefinite"/></circle>
-            <circle cx="26.2" cy="25.3" r="1.9" fill="#ff453a" stroke="white" stroke-width="0.6" filter="url(#gr4)" class="map-zone" data-zone="LEBANON"/>
-            <text x="26.2" y="22.2" fill="white" font-size="2.5" font-family="-apple-system" font-weight="700" text-anchor="middle" filter="url(#gs4)" class="map-zone" data-zone="LEBANON">LEBANON</text>
-            <circle cx="33.8" cy="22.5" r="1.9" fill="#ff9f0a" stroke="white" stroke-width="0.6" class="map-zone" data-zone="SYRIA"/>
-            <text x="33.8" y="19.5" fill="white" font-size="2.5" font-family="-apple-system" font-weight="600" text-anchor="middle" filter="url(#gs4)" class="map-zone" data-zone="SYRIA">SYRIA</text>
-            <circle cx="48.5" cy="27.2" r="2" fill="#ffd60a" stroke="white" stroke-width="0.6" class="map-zone" data-zone="IRAQ"/>
-            <text x="48.5" y="23.8" fill="white" font-size="2.5" font-family="-apple-system" font-weight="600" text-anchor="middle" filter="url(#gs4)" class="map-zone" data-zone="IRAQ">IRAQ</text>
-            <circle cx="71.8" cy="29.7" r="2.5" fill="#ff9f0a" opacity="0.2"><animate attributeName="r" values="2;7;2" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.3;0;0.3" dur="3s" repeatCount="indefinite"/></circle>
-            <circle cx="71.8" cy="29.7" r="2.2" fill="#ff9f0a" stroke="white" stroke-width="0.6" filter="url(#gr4)" class="map-zone" data-zone="IRAN"/>
-            <text x="71.8" y="35.5" fill="white" font-size="3" font-family="-apple-system" font-weight="700" text-anchor="middle" filter="url(#gs4)" class="map-zone" data-zone="IRAN">IRAN</text>
-            <circle cx="48" cy="83.1" r="3" fill="#ff9f0a" opacity="0.2"><animate attributeName="r" values="3;9;3" dur="2.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.3;0;0.3" dur="2.5s" repeatCount="indefinite"/></circle>
-            <circle cx="48" cy="83.1" r="2.2" fill="#ff9f0a" stroke="white" stroke-width="0.7" filter="url(#gr4)" class="map-zone" data-zone="YEMEN"/>
-            <text x="48" y="90" fill="white" font-size="2.8" font-family="-apple-system" font-weight="700" text-anchor="middle" filter="url(#gs4)" class="map-zone" data-zone="YEMEN">YEMEN</text>
-            <circle cx="78.2" cy="48.1" r="1.7" fill="#5ac8fa" stroke="white" stroke-width="0.6" class="map-zone" data-zone="HORMUZ"/>
-            <text x="78.2" y="44.5" fill="#5ac8fa" font-size="2.3" font-family="-apple-system" font-weight="600" text-anchor="middle" filter="url(#gs4)" class="map-zone" data-zone="HORMUZ">HORMUZ</text>
-            <path d="M71.8,29.7 Q52,15 26.2,25.3" fill="none" stroke="rgba(255,69,58,0.55)" stroke-width="0.6" stroke-dasharray="2.5,2"><animate attributeName="stroke-dashoffset" values="0;-18" dur="2s" repeatCount="indefinite"/></path>
-            <path d="M71.8,29.7 Q52,20 23.5,33.1" fill="none" stroke="rgba(255,69,58,0.4)" stroke-width="0.5" stroke-dasharray="2.5,2"><animate attributeName="stroke-dashoffset" values="0;-18" dur="2.5s" repeatCount="indefinite"/></path>
-            <path d="M71.8,29.7 Q65,58 48,83.1" fill="none" stroke="rgba(255,159,10,0.45)" stroke-width="0.5" stroke-dasharray="2.5,2"><animate attributeName="stroke-dashoffset" values="0;-18" dur="3s" repeatCount="indefinite"/></path>
-          </svg>
-          <!-- Legend -->
-          <div style="position:absolute;bottom:10px;left:10px;background:rgba(0,0,0,0.72);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:7px 10px;display:flex;flex-direction:column;gap:4px;">
-            <div style="display:flex;align-items:center;gap:5px;"><div style="width:7px;height:7px;border-radius:50%;background:#ff453a;flex-shrink:0;box-shadow:0 0 5px #ff453a;"></div><span style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:500;">Critical</span></div>
-            <div style="display:flex;align-items:center;gap:5px;"><div style="width:7px;height:7px;border-radius:50%;background:#ff9f0a;flex-shrink:0;"></div><span style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:500;">High</span></div>
-            <div style="display:flex;align-items:center;gap:5px;"><div style="width:7px;height:7px;border-radius:50%;background:#ffd60a;flex-shrink:0;"></div><span style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:500;">Elevated</span></div>
-            <div style="display:flex;align-items:center;gap:5px;"><div style="width:7px;height:7px;border-radius:50%;background:#5ac8fa;flex-shrink:0;"></div><span style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:500;">Watch</span></div>
-          </div>
-          <!-- Tooltip -->
-          <div id="fb-tooltip" style="display:none;position:absolute;top:10px;left:50%;transform:translateX(-50%);background:rgba(16,16,18,0.96);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.13);border-radius:14px;padding:11px 14px;min-width:190px;max-width:88%;box-shadow:0 6px 28px rgba(0,0,0,0.8);z-index:20;">
-            <div id="fb-name" style="font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;"></div>
-            <div id="fb-level" style="font-size:11px;font-weight:600;margin-bottom:6px;"></div>
-            <div id="fb-detail" style="font-size:11px;color:rgba(255,255,255,0.72);line-height:1.5;"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- INTENSITY -->
-    <div class="w" style="animation-delay:.28s">
-      <div class="wl"><div class="wl-icon" style="background:rgba(191,90,242,0.18);color:#bf5af2;">📊</div>Intensity</div>
-      <div class="bars">
-        <div class="bar-col"><div class="bar-fill" style="height:88%;background:linear-gradient(180deg,var(--red),rgba(255,69,58,0.25));"></div><div class="bar-lbl">Air</div></div>
-        <div class="bar-col"><div class="bar-fill" style="height:72%;background:linear-gradient(180deg,var(--orange),rgba(255,159,10,0.25));"></div><div class="bar-lbl">Gnd</div></div>
-        <div class="bar-col"><div class="bar-fill" style="height:54%;background:linear-gradient(180deg,var(--teal),rgba(90,200,250,0.25));"></div><div class="bar-lbl">Sea</div></div>
-        <div class="bar-col"><div class="bar-fill" style="height:65%;background:linear-gradient(180deg,var(--blue),rgba(10,132,255,0.25));"></div><div class="bar-lbl">Cyber</div></div>
-        <div class="bar-col"><div class="bar-fill" style="height:90%;background:linear-gradient(180deg,var(--yellow),rgba(255,214,10,0.25));"></div><div class="bar-lbl">Hum.</div></div>
-      </div>
-      <div style="margin-top:12px;">
-        <div class="prog-row">
-          <div class="prog-meta"><span>Overall threat</span><span style="color:var(--red);font-weight:600;">Critical</span></div>
-          <div class="prog-track"><div class="prog-fill" style="width:82%;background:linear-gradient(90deg,var(--orange),var(--red));"></div></div>
-        </div>
-        <div class="prog-row" style="margin-bottom:0">
-          <div class="prog-meta"><span>Ceasefire odds</span><span style="color:var(--yellow);font-weight:600;">Low</span></div>
-          <div class="prog-track"><div class="prog-fill" style="width:18%;background:linear-gradient(90deg,var(--yellow),var(--green));"></div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SOURCES -->
-    <div class="w" style="animation-delay:.32s">
-      <div class="wl"><div class="wl-icon" style="background:rgba(48,209,88,0.16);color:var(--green);">🔗</div>Sources</div>
-      <div class="src-list">
-        <a href="https://www.reuters.com/world/middle-east/" target="_blank" class="src-row">
-          <div><div class="src-name" style="color:#ff9500;">Reuters</div><div class="src-sub">Middle East</div></div>
-          <div class="src-arrow">›</div>
-        </a>
-        <a href="https://www.bbc.com/news/world/middle_east" target="_blank" class="src-row">
-          <div><div class="src-name" style="color:var(--teal);">BBC</div><div class="src-sub">World News</div></div>
-          <div class="src-arrow">›</div>
-        </a>
-        <a href="https://apnews.com/middle-east" target="_blank" class="src-row">
-          <div><div class="src-name" style="color:var(--label2);">AP News</div><div class="src-sub">Middle East</div></div>
-          <div class="src-arrow">›</div>
-        </a>
-        <a href="https://www.aljazeera.com/middle-east/" target="_blank" class="src-row">
-          <div><div class="src-name" style="color:var(--green);">Al Jazeera</div><div class="src-sub">Regional</div></div>
-          <div class="src-arrow">›</div>
-        </a>
-        <a href="https://www.timesofisrael.com" target="_blank" class="src-row">
-          <div><div class="src-name" style="color:var(--red);">Times of Israel</div><div class="src-sub">Regional</div></div>
-          <div class="src-arrow">›</div>
-        </a>
-      </div>
-      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--sep);display:flex;justify-content:center;">
-        <button class="refresh-btn" onclick="countdown=REFRESH_INTERVAL;fetchAll();">↻  Refresh Now</button>
-      </div>
-    </div>
-
-  </div><!-- /grid -->
-
- 
-  <div class="safe-bottom"></div>
-</div><!-- /page -->
+</div><!-- /app-shell -->
 
 <script>
-// Clock
-function tick() {
-  const n = new Date();
-  document.getElementById('clock').textContent =
-    String(n.getUTCHours()).padStart(2,'0') + ':' +
-    String(n.getUTCMinutes()).padStart(2,'0') + ' UTC';
-}
-setInterval(tick, 1000); tick();
-
-// Share
-function shareApp() {
-  const shareData = {
-    title: 'Conflict Watch — Middle East Intelligence',
-    text: 'Live Middle East conflict dashboard — threat levels, breaking news & satellite map.',
-    url: window.location.href
-  };
-  if (navigator.share) {
-    navigator.share(shareData).catch(() => {});
-  } else {
-    // Fallback — copy URL to clipboard
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      const btn = document.querySelector('[onclick="shareApp()"]');
-      if (btn) { btn.textContent = '✓ Link Copied'; setTimeout(() => btn.textContent = '⬆ Share', 2000); }
-    }).catch(() => {
-      prompt('Copy this link to share:', window.location.href);
-    });
-  }
+// ── TAB SWITCHING ──
+function switchTab(tab) {
+  document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.getElementById('pane-'+tab).classList.add('active');
 }
 
-const srcColors = {
-  'Reuters':'#ff9500','BBC':'#5ac8fa','AP':'rgba(255,255,255,0.6)',
-  'Al Jazeera':'#30d158','Guardian':'#46b47e','Times of Israel':'#ff453a','TOI':'#ff453a'
-};
+// ── PROPERTIES SCREENS ──
+function goToFlow() { showScreen('screen-flow'); }
 
-const fallback = [
-  {hl:"Israel continues airstrikes in Gaza as ceasefire talks stall in Cairo",src:"Reuters",t:"Live",url:"https://www.reuters.com/world/middle-east/",brk:true},
-  {hl:"US Navy intercepts Houthi drone targeting Red Sea vessel",src:"AP",t:"1h ago",url:"https://apnews.com/middle-east",brk:false},
-  {hl:"Lebanon ceasefire monitoring enters critical phase; violations along Blue Line",src:"BBC",t:"3h ago",url:"https://www.bbc.com/news/world/middle_east",brk:false},
-  {hl:"IAEA warns of Iran enrichment acceleration at Fordow facility",src:"Guardian",t:"4h ago",url:"https://www.theguardian.com/world/middleeast",brk:false},
-  {hl:"Syria: transitional government battles armed factions in Deir ez-Zor",src:"Al Jazeera",t:"5h ago",url:"https://www.aljazeera.com/middle-east/",brk:false},
-  {hl:"IDF expands Rafah corridor; humanitarian agencies raise alarm",src:"Times of Israel",t:"6h ago",url:"https://www.timesofisrael.com",brk:false},
-  {hl:"Saudi Arabia warns Houthis against further infrastructure attacks",src:"Reuters",t:"7h ago",url:"https://www.reuters.com/world/middle-east/",brk:false},
-  {hl:"Iranian patrol boats shadow US carrier group near Strait of Hormuz",src:"AP",t:"9h ago",url:"https://apnews.com/middle-east",brk:false},
-  {hl:"West Bank: raids intensify, PA condemns settlement expansion",src:"Al Jazeera",t:"10h ago",url:"https://www.aljazeera.com/middle-east/",brk:false},
-  {hl:"US deploys additional Patriot batteries to Gulf amid escalation fears",src:"Reuters",t:"12h ago",url:"https://www.reuters.com/world/middle-east/",brk:false},
+function goBack(id) { showScreen(id, true); }
+
+function showScreen(id, back) {
+  const pane = document.getElementById('pane-properties');
+  pane.querySelectorAll('.screen').forEach(s=>s.classList.remove('active','back'));
+  const t = document.getElementById(id);
+  if (back) t.classList.add('back');
+  t.classList.add('active');
+  const sa = t.querySelector('.scroll-area');
+  if (sa) sa.scrollTop = 0;
+}
+
+// ── ADVERTISER SCREENS ──
+function goToAdvertiser(id) {
+  if (id === 'dabur') showAdvScreen('screen-adv-dabur');
+}
+function goBackAdv(id) { showAdvScreen(id, true); }
+function showAdvScreen(id, back) {
+  const pane = document.getElementById('pane-advertiser');
+  pane.querySelectorAll('.screen').forEach(s=>s.classList.remove('active','back'));
+  const t = document.getElementById(id);
+  if (back) t.classList.add('back');
+  t.classList.add('active');
+  const sa = t.querySelector('.scroll-area');
+  if (sa) sa.scrollTop = 0;
+}
+
+// ── ADVERTISER SEGMENTS ──
+function switchAdvSeg(el, id) {
+  document.querySelectorAll('#screen-adv-dabur .seg-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  ['adv-seg-gaps','adv-seg-pitch','adv-seg-angles'].forEach(s=>{
+    const e=document.getElementById(s);
+    if(e) e.style.display=(s===id)?'block':'none';
+  });
+}
+
+// ── CHANNEL DATA ──
+const channels = [
+  {id:'lallantop',name:'The Lallantop',cat:'Premium',icon:'⭐',genre:'premium',subs:'34.8M',views:'1,887M',fy25views:'2,515M',growth:'-24.94%',growthPos:false,geo:'India 93.3% · US 1% · Saudi Arabia 1%',age:'25–34 yrs: 43.1% · 35–44 yrs: 20.6% · 18–24 yrs: 18.8%',gender:'Male 85.1% · Female 14.7%',shows:[{name:'The Lallantop Show',time:'Mon–Fri · 9 PM · VOD · 25-30 min'},{name:'Guest in the Newsroom',time:'Sunday · 10 AM · VOD · 90-120 min'},{name:'Sehat',time:'Mon–Fri · 1 PM · VOD · 10 min'},{name:'Duniyadari',time:'Mon–Fri · 8:30 PM · VOD · 15 min'},{name:'Kharcha Paani',time:'Mon–Fri · 7:30 PM · VOD · 10 min'},{name:'Neta Nagri',time:'Saturday · 10 AM · VOD · 60-90 min'}],anchors:'Siddhant Mohan · Kuldeep Mishra · Shruti Agarwal · Ankur Singh',advertisers:['News & Education Apps','Tech & Gadgets','Food & Beverages','Finance Services','Lifestyle & Fashion'],competitors:[{name:'No direct competition YouTube channel (deck note)',subs:'Show-level competition exists'}],note:'FY24-25: 2,515M → FY25-26: 1,887M. YoY: -24.94%. 34.8M subscribers. 30-day views ~145M.'},
+  {id:'up',name:'UP Tak',cat:'News TAKs',icon:'🏙️',genre:'news',subs:'11.8M',views:'492M',fy25views:'719M',growth:'-31.51%',growthPos:false,geo:'India 97.2% · US 1%',age:'25–34 yrs: 37.4% · 35–44 yrs: 20.7% · 45–54 yrs: 12.7%',gender:'Male 87.2% · Female 12.6%',shows:[{name:'Aaj Ka UP',time:'Mon–Fri · 9:30 PM · VOD · 10-15 min'},{name:'Mudde Ki Baat',time:'Mon–Fri · 7 PM · VOD · 30 min'},{name:'Kumar Abhishek Podcast: UP Ki Baat',time:'Weekly Sunday · 9 PM · 15-20 min'}],anchors:'Kumar Abhishek · Neeraj Gupta · Gauranshi Srivastava',advertisers:['FMCG & Consumer Goods','Banking & Financial Services','Telecom','E-commerce','Education','Automobiles','Real Estate','Healthcare & Pharma','Government & PSU Schemes','Agriculture'],competitors:[{name:'News18 UP Uttarakhand',subs:'10M'},{name:'ABP Ganga',subs:'8.27M'},{name:'Zee UP Uttarakhand',subs:'3.15M'},{name:'Bharat Samachar',subs:'4.08M'}],note:'FY24-25: 719M → FY25-26: 492M. YoY: -31.51%. Explicitly lists Dabur as a potential advertiser in the deck.'},
+  {id:'mumbai',name:'Mumbai Tak',cat:'News TAKs',icon:'🌆',genre:'news',subs:'4.54M',views:'309M',fy25views:'564M',growth:'-45.33%',growthPos:false,geo:'India 99%',age:'25–34 yrs: 25.1% · 35–44 yrs: 24.3% · 45–54 yrs: 19.3%',gender:'Male 85.6% · Female 14.3%',shows:[{name:'Mumbai Tak Chavadi',time:'60 min · 7 PM · LIVE'},{name:'Big News Today',time:'30 min · 5 days · 5 PM · LIVE'},{name:'Legal News (New)',time:'20 min · Fortnightly · 9 AM'},{name:'Health Talk (New)',time:'30 min · Weekly · 5 PM'},{name:'Brand Marathi (New)',time:'60 min · Fortnightly'}],anchors:'Sahil Joshi · Anuja Shakras · Abhijeet · Ajay',advertisers:['FMCG','Banking','Real Estate','Healthcare','Automobiles','Jewellery'],competitors:[{name:'TV9 Marathi',subs:'14M'},{name:'ABP Majha',subs:'16.1M'},{name:'Zee 24 Taas',subs:'9.79M'}],note:'FY24-25: 564M → FY25-26: 309M. YoY: -45.33%.'},
+  {id:'bihar',name:'Bihar Tak',cat:'News TAKs',icon:'📈',genre:'news',subs:'4.59M',views:'310M',fy25views:'286M',growth:'+8.52%',growthPos:true,geo:'India 96.6% · Saudi Arabia 1%',age:'25–34 yrs: 45% · 18–24 yrs: 21.1% · 35–44 yrs: 17.3%',gender:'Male 88.3% · Female 11.5%',shows:[{name:'Aaj Ka Bihar',time:'Mon–Fri · 8 PM · VOD · 8-10 min'},{name:'Bat Bihar Ki',time:'Mon–Fri · 7 PM · LIVE · 45-60 min'},{name:'Maharathi',time:'Weekly Saturday · 8 PM · 30-45 min'},{name:'Chacha, Bhatija Aur Charcha',time:'Weekly Saturday · 7 PM · 8-10 min'}],anchors:'Sujeet Kumar Jha · Ashish Abhinav · Aniket Kumar',advertisers:['FMCG','Banking','Telecom','Education','Agriculture'],competitors:[{name:'News18 Bihar Jharkhand',subs:'12.9M'},{name:'Live Cities Media',subs:'7.92M'},{name:'Zee Bihar Jharkhand',subs:'6.47M'}],note:'★ FY24-25: 286M → FY25-26: 310M. YoY: +8.52% — only Tak channel with positive growth. Explicitly lists Dabur as a potential advertiser.'},
+  {id:'newstak',name:'News Tak',cat:'News TAKs',icon:'📡',genre:'news',subs:'12.1M',views:'225M',fy25views:'401M',growth:'-43.78%',growthPos:false,geo:'India 95.5% · Saudi Arabia 1%',age:'25–34 yrs: 31.6% · 35–44 yrs: 22.7%',gender:'Male 86.5% · Female 13.3%',shows:[{name:'Manch',time:'Weekly Wednesday · 8 PM · VOD · 50-80 min'},{name:'Charchit Chehra',time:'Mon–Fri · 7 PM · VOD · 10 min'},{name:'Saptahik Sabha',time:'Weekly Saturday · 11 AM'},{name:'Doctor Sahab',time:'Fortnightly · 11 AM · Health/Pharma'}],anchors:'Kirti Rajora · Milind Khandekhar',advertisers:['FMCG','Banking','Healthcare','Telecom'],competitors:[{name:'All Hindi News Channels',subs:'—'}],note:'FY24-25: 401M → FY25-26: 225M. YoY: -43.78%. Manch = thought leadership platform.'},
+  {id:'crime',name:'Crime Tak',cat:'Interest TAKs',icon:'🔍',genre:'interest',subs:'13.2M',views:'725M',fy25views:'804M',growth:'-9.80%',growthPos:false,geo:'India 94% · US 1% · Nepal 1%',age:'25–34 yrs: 36.3% · 35–44 yrs: 24.1%',gender:'Male 73.4% · Female 26.4%',shows:[{name:'Shams ki Zubani',time:'Mon–Sat · 9 PM · VOD'},{name:'Chirag Ka Jinn',time:'Mon–Fri · 1 PM · LIVE'},{name:'Decoding Crime',time:'Mon–Fri · 8 PM · VOD'},{name:'Mafia Queen',time:'Sunday · 8 PM'},{name:'Mystery With Manisha',time:'Saturday · 8 PM'},{name:'Jurm',time:'Mon–Fri · 11 AM'}],anchors:'Shams Tahir Khan · Chirag Goti · Supratim Banerjee · Manisha Jha',advertisers:['VPN services','Home security','Insurance','Legal services'],competitors:[{name:'True Crime News',subs:'5.54M'},{name:'Unseen True Crime',subs:'1.34M'}],note:'FY24-25: 804M → FY25-26: 725M. YoY: -9.80%. Highest female share (26.4%) among all Tak channels.'},
+  {id:'sports',name:'Sports Tak',cat:'Interest TAKs',icon:'🏏',genre:'interest',subs:'7.89M',views:'309M',fy25views:'439M',growth:'-29.53%',growthPos:false,geo:'India 85.4% · US 1.6% · Canada 1.1%',age:'25–34 yrs: 45.3% · 35–44 yrs: 24.2%',gender:'Male 94.1% · Female 5.8%',shows:[{name:'Aaj Ka Agenda',time:'Daily · 6:30 PM · LIVE · 60-75 min'},{name:'Vikrant Unfiltered',time:'Weekly Saturday · 9:30 PM'}],anchors:'Vikrant Gupta · Nikhil Naaz',advertisers:['Sports apparel','Energy drinks'],competitors:[{name:'Akaash Chopra',subs:'5.18M'},{name:'Cricbuzz',subs:'2.9M'},{name:'ESPNcricinfo',subs:'1.94M'}],note:'FY24-25: 439M → FY25-26: 309M. YoY: -29.53%. Highest male skew (94.1%).'},
+  {id:'global',name:'IT Global',cat:'Premium',icon:'🌐',genre:'premium',subs:'160K',views:'49M',fy25views:'3M',growth:'+1,432.99%',growthPos:true,geo:'India 48.5% · US 15.2% · Canada 4% · UK 4% · Australia 3%',age:'25–34 yrs: 26% · 35–44 yrs: 25% · 45–54 yrs: 17%',gender:'Male 87% · Female 13%',shows:[{name:'Statecraft',time:'Geeta Mohan · Geopolitics'},{name:'Namaste World',time:'Pranay Upadhyaya · Diaspora'},{name:'The Interview',time:'Geeta Mohan'}],anchors:'Geeta Mohan · Pranay Upadhyaya · Sandeep Unnithan',advertisers:['Remittances','Airlines','Global ed-tech','NRI banking'],competitors:[{name:'WION',subs:'10.4M'},{name:'Firstpost',subs:'9.45M'}],note:'FY24-25: 3M → FY25-26: 49M. YoY: +1,432.99%. 15.2% US audience.'},
+  {id:'sbb',name:'Saas Bahu Aur Betiyaan',cat:'Entertainment',icon:'🎭',genre:'premium',subs:'8.3M',views:'539M',fy25views:'553M',growth:'-2.52%',growthPos:false,geo:'India 84% · Pakistan 4% · Nepal 3%',age:'18–24 yrs: 34% · 25–34 yrs: 34% · 35–44 yrs: 16%',gender:'Male 50% · Female 50%',shows:[{name:'SBB Xtra – Various Packages',time:'Full episodes · promos · Aaj Tak TV sync'}],anchors:'Various',advertisers:['Soaps','Jewellery','Kitchenware'],competitors:[{name:'Colors TV',subs:'81.9M'},{name:'Zee TV',subs:'97.4M'}],note:'FY24-25: 553M → FY25-26: 539M. Only IT property with 50/50 gender split.'},
+  {id:'teentaal',name:'Teen Taal Podcast',cat:'Podcast',icon:'🎙️',genre:'podcast',subs:'496K',views:'15M',fy25views:'7M',growth:'+118.39%',growthPos:true,geo:'India 92.1% · US 1.5% · UAE 1%',age:'25–34 yrs: 31.4% · 25–44 yrs: 23.7%',gender:'Male 89% · Female 11%',shows:[{name:'Weekly comedy podcast',time:'Unscripted · Politics, pop culture, food'},{name:'Live tours',time:'10,000+ attendees Lucknow · 4,000 Pune'}],anchors:'Kuldeep Mishra · Kamlesh Kishore Singh · Asif Khan',advertisers:['Food delivery','Entertainment apps','Comedy streaming'],competitors:[{name:'Puliyabaazi',subs:'11.5K'}],note:'FY24-25: 7M → FY25-26: 15M. YoY: +118.39%. 4× Golden Mikes Radio Awards 2022–2025.'},
+  {id:'ballabol',name:'Ballabol Cricket',cat:'Podcast',icon:'🏆',genre:'podcast',subs:'~500K',views:'1.3M',fy25views:'—',growth:'+136.42%',growthPos:true,geo:'Not specified in deck',age:'Not specified in deck',gender:'Not specified in deck',shows:[{name:'IPL Special Series',time:'Pre-Match Buzz · Post-Match Highlights · Team Trivia'}],anchors:'Nikhil Naaz · Keshav Kumar',advertisers:['Sports apparel','Beverages','Fantasy gaming','IPL sponsors'],competitors:[{name:'Beyond23 Podcast',subs:'107K'}],note:'YoY: +136.42%. Aaj Tak Radio platform: 491K followers.'},
+  {id:'sorrry',name:'So Sorry (Politoons)',cat:'Satire',icon:'🎨',genre:'interest',subs:'5.31M',views:'33M',fy25views:'50M',growth:'-33.95%',growthPos:false,geo:'India 89.4% · US 2%',age:'25–34 yrs: 31% · 35–44 yrs: 27%',gender:'Male 82.3% · Female 17.6%',shows:[{name:'So Sorry Politoons',time:'1-2 min shorts · 24-72hr turnaround · 1,400+ episodes'}],anchors:'No anchor — animated format',advertisers:['Satire book publishers','VPNs'],competitors:[{name:'No competition listed in deck',subs:'—'}],note:'FY24-25: 50M → FY25-26: 33M. 10+ awards: FICCI BAF, ADMA Gold.'},
+  {id:'bangla',name:'Aaj Tak Bangla',cat:'Regional',icon:'🌿',genre:'regional',subs:'3.4M',views:'585M',fy25views:'723M',growth:'-19.20%',growthPos:false,geo:'India 82% · Bangladesh 15% · Saudi 1%',age:'25–34 yrs: 28% · 35–44 yrs: 22%',gender:'Male 81% · Female 19%',shows:[{name:'Khabar In-Depth',time:'Indrajeet Kondu'},{name:'Sada Kalo',time:'Indira'},{name:'Shorojontro',time:'Ahana'},{name:'Orajnoitik',time:'Swapan'}],anchors:'Indrajeet Kondu · Indira · Ahana · Swapan',advertisers:['FMCG','Banking','Telecom'],competitors:[{name:'ABP Ananda',subs:'13.3M'},{name:'TV9 Bangla',subs:'5.79M'}],note:'FY24-25: 723M → FY25-26: 585M. 15% Bangladesh viewership.'},
+  {id:'kisan',name:'Kisan Tak',cat:'Agriculture',icon:'🌾',genre:'regional',subs:'1.1M',views:'57M',fy25views:'126M',growth:'-54.49%',growthPos:false,geo:'India 98%',age:'25–34 yrs: 29% · 35–44 yrs: 21%',gender:'Male 87% · Female 13%',shows:[{name:'Daily agri news',time:'Crop prices · PM Kisan · weather'},{name:'Practical demos',time:'Organic farming · tractor reviews'}],anchors:'Various',advertisers:['Tractors','Fertilizers','Rural loans'],competitors:[{name:'Hello Kisaan',subs:'1.88M'},{name:'Krishi Jagran',subs:'248K'}],note:'FY24-25: 126M → FY25-26: 57M. 98% India, rural-first. Dabur listed as fit advertiser.'},
+  {id:'mo',name:'MO (IG-first)',cat:'Digital',icon:'📱',genre:'interest',subs:'141K YT · 467K IG',views:'3M',fy25views:'0.01M',growth:'+22,091%',growthPos:true,geo:'India 81% · US 5% · UK 2%',age:'25–34 yrs: 35% · 18–24 yrs: 17%',gender:'Male 69% · Female 31%',shows:[{name:'60-sec viral explainers',time:'Instagram primary · YouTube Shorts'}],anchors:'Various',advertisers:['Apps','Telecom','Youth brands'],competitors:[{name:'Brut India',subs:'4.76M'},{name:'The Quint',subs:'4.12M'}],note:'Started Feb\'25. FY25-26: 3M views. 31% female.'},
+  {id:'healthwealth',name:'Health Wealth',cat:'Wellness',icon:'💚',genre:'premium',subs:'20.1K',views:'5M',fy25views:'—',growth:"New Dec'25",growthPos:true,geo:'India 91% · US 3%',age:'25–34 yrs: 47% · 18–24 yrs: 23%',gender:'Male 78% · Female 22%',shows:[{name:'TV + VODcast + Social + Magazine + Events',time:'360-degree format'},{name:'Native e-commerce + affiliate model',time:'Direct product-linkage'}],anchors:'Sonal Kapoor',advertisers:['Healthcare brands','Wellness products','Premium health'],competitors:[{name:'No competition listed in deck',subs:'—'}],note:'Started Dec\'25. 47% in 25-34. Health-as-luxury positioning.'},
+  {id:'ne',name:'IT North East',cat:'Regional',icon:'🏔️',genre:'regional',subs:'225K',views:'—',fy25views:'—',growth:'Stable',growthPos:true,geo:'India 94.5% · US 1%',age:'25–34 yrs: 34.5% · 35–44 yrs: 22%',gender:'Male 70% · Female 30%',shows:[{name:'8-state NE coverage',time:'Assam · Manipur · Nagaland + 5 states'}],anchors:'Various NE journalists',advertisers:['ONGC/OIL India','Assam Tea brands','NE Banks','Tata/Reliance NE'],competitors:[{name:'News Live',subs:'3.29M'},{name:'Pratidin Time',subs:'2.61M'}],note:'225K subs. Views "Yet to be updated" in deck.'},
+  {id:'malay',name:'IT Malayalam',cat:'Regional',icon:'🌴',genre:'regional',subs:'59.7K',views:'—',fy25views:'—',growth:'Early',growthPos:true,geo:'India 89% · UAE 4% · Saudi 1.5%',age:'45–54 yrs: 22% · 55–64 yrs: 20% · 35–44 yrs: 20%',gender:'Male 65% · Female 35%',shows:[{name:'Kerala & Malayalam diaspora news',time:'Digital-first · WhatsApp/IG Reels'}],anchors:'Not specified in deck',advertisers:['Kerala-focused brands','National Malayalam brands','Diaspora services'],competitors:[{name:'Asianet News',subs:'11.6M'},{name:'Manorama News',subs:'10.5M'}],note:'59.7K subs. Views "Yet to be updated". UAE 4%. 35% female.'},
 ];
 
-function renderFeed(items) {
-  const el = document.getElementById('news-feed');
-  el.innerHTML = items.slice(0,12).map(item => {
-    const c = srcColors[item.src] || 'rgba(255,255,255,0.5)';
-    return `<a class="news-row" href="${item.url}" target="_blank">
-      <div class="news-bar" style="background:${c};"></div>
-      <div class="news-body">
-        <div class="news-meta">
-          <span class="news-src" style="color:${c};">${item.src}</span>
-          <span class="news-time">${item.t}</span>
-          ${item.brk?'<span class="brk">Breaking</span>':''}
-        </div>
-        <div class="news-hl">${item.hl}</div>
+const SRC = 'Marketing Pitch Deck Analysis, 19 Mar · India Today Group · YouTube Analytics';
+
+function renderChannelList(genre) {
+  const list = document.getElementById('channel-list');
+  const filtered = genre==='all' ? channels : channels.filter(c=>c.genre===genre);
+  list.innerHTML = filtered.map(ch=>`
+    <div class="card-row" onclick="goToChannel('${ch.id}')">
+      <div class="card-icon" style="background:${iconBg(ch.genre)}">${ch.icon}</div>
+      <div class="card-row-content">
+        <div class="card-row-title">${ch.name}</div>
+        <div class="card-row-sub">${ch.subs} subs · ${ch.cat}</div>
       </div>
-    </a>`;
-  }).join('');
-  document.getElementById('feed-count').textContent = items.length + ' stories';
-  document.getElementById('s-inc').textContent = items.filter(i=>i.brk).length || '—';
+      <div class="card-row-right">
+        <span class="badge ${ch.growthPos?'badge-green':'badge-red'}">${ch.growth}</span>
+        <span class="chevron">›</span>
+      </div>
+    </div>`).join('');
 }
 
-function updateTicker(items) {
-  const texts = items.slice(0,7).map(i=>i.hl);
-  const doubled = [...texts,...texts];
-  document.getElementById('ticker').innerHTML = doubled.map(t=>`<span>${t}</span>`).join('');
+function iconBg(g){return({news:'rgba(50,173,230,0.12)',interest:'rgba(255,59,48,0.1)',premium:'rgba(255,149,0,0.12)',podcast:'rgba(175,82,222,0.12)',regional:'rgba(52,199,89,0.1)'})[g]||'rgba(0,0,0,0.05)'}
+
+function filterGenre(genre, el) {
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('selected'));
+  el.classList.add('selected');
+  renderChannelList(genre);
 }
 
-async function fetchRSS(url, name) {
-  try {
-    const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,{signal:AbortSignal.timeout(7000)});
-    const d = await r.json();
-    if(!d.contents) return [];
-    const xml = new DOMParser().parseFromString(d.contents,'text/xml');
-    return [...xml.querySelectorAll('item')].slice(0,6).map(item=>{
-      const hl = item.querySelector('title')?.textContent||'';
-      const link = item.querySelector('link')?.textContent||'#';
-      const pub = item.querySelector('pubDate')?.textContent;
-      const dt = pub ? new Date(pub) : null;
-      const h = dt ? Math.round((Date.now()-dt)/3600000) : null;
-      const t = h!==null?(h===0?'Just now':`${h}h ago`):'Recent';
-      const brk = ['breaking','urgent','alert'].some(w=>hl.toLowerCase().includes(w));
-      return {hl,src:name,t,url:link,brk};
-    });
-  } catch { return []; }
+function goToChannel(id) {
+  const ch = channels.find(c=>c.id===id);
+  if (!ch) return;
+  document.getElementById('detail-nav-title').textContent = ch.name;
+  const showsHtml = ch.shows.map(s=>`<div class="show-item"><div class="show-item-name">${s.name}</div><div class="show-item-time">${s.time}</div></div>`).join('');
+  const advHtml = ch.advertisers.map(a=>`<div class="adv-tag">${a}</div>`).join('');
+  const compHtml = ch.competitors.map(c=>`<div class="comp-row"><div class="comp-name">${c.name}</div><div class="comp-subs">${c.subs}</div></div>`).join('');
+
+  document.getElementById('detail-content').innerHTML = `
+    <div class="detail-header">
+      <div class="detail-icon">${ch.icon}</div>
+      <div class="detail-name">${ch.name}</div>
+      <div class="detail-cat">${ch.cat}</div>
+      <div class="detail-stats">
+        <div class="detail-stat"><div class="detail-stat-val">${ch.subs}</div><div class="detail-stat-lbl">Subscribers</div></div>
+        <div class="detail-stat"><div class="detail-stat-val">${ch.views}</div><div class="detail-stat-lbl">Views FY26</div></div>
+        <div class="detail-stat"><div class="detail-stat-val" style="color:${ch.growthPos?'var(--green)':'var(--red)'}">${ch.growth}</div><div class="detail-stat-lbl">YoY</div></div>
+      </div>
+    </div>
+    <div class="segment-wrap">
+      <div class="segment">
+        <div class="seg-btn active" onclick="switchSeg(this,'seg-a')">Audience</div>
+        <div class="seg-btn" onclick="switchSeg(this,'seg-s')">Shows</div>
+        <div class="seg-btn" onclick="switchSeg(this,'seg-d')">Advertisers</div>
+        <div class="seg-btn" onclick="switchSeg(this,'seg-c')">Competitors</div>
+      </div>
+    </div>
+    <div id="seg-a">
+      <div class="info-block">
+        <div class="info-block-row"><div class="info-block-label">Geography (YT Analytics)</div><div class="info-block-val">${ch.geo}</div></div>
+        <div class="info-block-row"><div class="info-block-label">Age group (YT Analytics)</div><div class="info-block-val">${ch.age}</div></div>
+        <div class="info-block-row"><div class="info-block-label">Gender split (YT Analytics)</div><div class="info-block-val">${ch.gender}</div></div>
+        <div class="info-block-row"><div class="info-block-label">Views FY2024-25</div><div class="info-block-val">${ch.fy25views}</div></div>
+      </div>
+    </div>
+    <div id="seg-s" style="display:none">
+      <div class="card-group">${showsHtml}${ch.anchors?`<div class="show-item"><div class="show-item-name" style="font-size:12px;color:var(--text2)">Anchors</div><div class="show-item-time" style="font-size:14px;color:var(--text);margin-top:3px">${ch.anchors}</div></div>`:''}</div>
+    </div>
+    <div id="seg-d" style="display:none">
+      <div class="info-block"><div class="info-block-row"><div class="info-block-label">Potential advertisers (as per deck)</div><div class="tag-cloud" style="padding:8px 0 0">${advHtml}</div></div></div>
+    </div>
+    <div id="seg-c" style="display:none">
+      <div class="card-group">${compHtml}</div>
+      <div class="note-card"><div class="note-label">📊 Deck data note</div><div class="note-body">${ch.note}</div></div>
+    </div>
+    <div class="data-source"><div class="data-source-text"><strong>📄 Source:</strong> ${SRC}</div></div>
+    <div class="safe-bottom"></div>`;
+
+  showScreen('screen-detail');
 }
 
-async function fetchAll() {
-  document.getElementById('news-feed').innerHTML = '<div class="loading"><div class="spin"></div><span>Fetching…</span></div>';
-  document.getElementById('feed-count').textContent = 'Loading…';
-
-  const feeds = [
-    {url:'https://feeds.bbci.co.uk/news/world/middle_east/rss.xml',name:'BBC'},
-    {url:'https://rss.reuters.com/Reuters/worldNews',name:'Reuters'},
-    {url:'https://www.aljazeera.com/xml/rss/all.xml',name:'Al Jazeera'},
-    {url:'https://feeds.theguardian.com/theguardian/world/middle-east/rss',name:'Guardian'},
-  ];
-
-  const results = await Promise.allSettled(feeds.map(f=>fetchRSS(f.url,f.name)));
-  let all = results.flatMap(r=>r.status==='fulfilled'?r.value:[]);
-
-  const meWords=['middle east','gaza','israel','hamas','hezbollah','iran','iraq','syria','lebanon','yemen','houthi','west bank','idf','netanyahu','palestin','beirut','tehran','saudi','strait','hormuz'];
-  let filtered = all.filter(i=>meWords.some(w=>i.hl.toLowerCase().includes(w)));
-  if(filtered.length<4) filtered=fallback;
-
-  filtered.sort((a,b)=>(b.brk?1:0)-(a.brk?1:0));
-  const live = results.filter(r=>r.status==='fulfilled'&&r.value.length>0).length;
-  document.getElementById('s-src').textContent = live||5;
-  renderFeed(filtered);
-  updateTicker(filtered);
-
-  // Show "UPDATED" flash
-  const ind = document.getElementById('refresh-indicator');
-  if (ind) {
-    ind.style.display = 'inline';
-    ind.style.animation = 'none';
-    void ind.offsetWidth; // reflow
-    ind.style.animation = 'refreshFlash 2.5s ease-out forwards';
-    setTimeout(() => { ind.style.display = 'none'; }, 2600);
-  }
-
-  // Update last-sync time
-  const syncEl = document.getElementById('s-sync-time');
-  if (syncEl) syncEl.textContent = 'Last sync: ' + new Date().toUTCString().split(' ')[4] + ' UTC';
+function switchSeg(el, id) {
+  document.querySelectorAll('#screen-detail .seg-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  ['seg-a','seg-s','seg-d','seg-c'].forEach(s=>{const e=document.getElementById(s);if(e)e.style.display=(s===id)?'block':'none'});
 }
 
-// ── AUTO-REFRESH COUNTDOWN ─────────────────────
-const REFRESH_INTERVAL = 5 * 60; // seconds
-let countdown = REFRESH_INTERVAL;
-let isRefreshing = false;
-
-function updateCountdown() {
-  if (isRefreshing) return;
-  countdown--;
-  if (countdown <= 0) {
-    countdown = REFRESH_INTERVAL;
-    isRefreshing = true;
-    fetchAll().finally(() => { isRefreshing = false; });
-  }
-
-  const m = Math.floor(countdown / 60);
-  const s = countdown % 60;
-  const display = `${m}:${String(s).padStart(2,'0')}`;
-  const cdEl = document.getElementById('s-countdown');
-  if (cdEl) cdEl.textContent = display;
-
-  // Progress bar — fills as time elapses, empties when refresh fires
-  const elapsed = REFRESH_INTERVAL - countdown;
-  const pct = (elapsed / REFRESH_INTERVAL) * 100;
-  const bar = document.getElementById('s-progress');
-  if (bar) bar.style.width = (100 - pct) + '%';
-
-  // Turn countdown red in last 30s
-  if (cdEl) cdEl.style.color = countdown <= 30 ? 'var(--red)' : 'var(--blue)';
+// Clock
+function updateClock(){
+  const n=new Date();
+  const t=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');
+  document.querySelectorAll('.clock').forEach(el=>el.textContent=t);
 }
+updateClock();
+setInterval(updateClock,10000);
 
-fetchAll();
-setInterval(updateCountdown, 1000);
-
-// ── LEAFLET MAP ────────────────────────────────
-(function() {
-  const zones = [
-    { name:'Gaza Strip',       level:'🔴 Critical', color:'#ff453a', lat:31.40, lng:34.35, r:14, detail:'IDF ground & air operations ongoing. Rafah corridor active. Mass casualty emergency declared.' },
-    { name:'West Bank',        level:'🔴 Critical', color:'#ff453a', lat:31.90, lng:35.20, r:11, detail:'IDF raids in Jenin & Tulkarm. Settler violence escalating. Settlement expansion continuing.' },
-    { name:'Southern Lebanon', level:'🔴 Critical', color:'#ff453a', lat:33.50, lng:35.50, r:11, detail:'IDF–Hezbollah ceasefire violations. Blue Line exchanges reported. South Lebanon tense.' },
-    { name:'Syria',            level:'🟠 High',     color:'#ff9f0a', lat:34.80, lng:38.90, r:11, detail:'Post-Assad transition. Armed factions active in Deir ez-Zor & northeast Syria.' },
-    { name:'Iraq',             level:'🟡 Elevated', color:'#ffd60a', lat:33.30, lng:44.40, r:11, detail:'PMF militia activity. Intermittent attacks on US bases. Political instability.' },
-    { name:'Iran',             level:'🟠 High',     color:'#ff9f0a', lat:32.50, lng:53.70, r:13, detail:'Fordow enrichment acceleration. IAEA warning issued. Proxy network coordination.' },
-    { name:'Yemen',            level:'🟠 High',     color:'#ff9f0a', lat:15.40, lng:44.20, r:13, detail:'Houthi drone & ballistic missile strikes. US Navy interceptions in Red Sea corridor.' },
-    { name:'Strait of Hormuz', level:'🔵 Watch',    color:'#5ac8fa', lat:26.60, lng:56.30, r: 9, detail:'Iranian patrol boats shadowing US carrier group. Oil tanker security alert in effect.' },
-  ];
-
-  function pulseMarker(z) {
-    const size = z.r * 3, dot = Math.round(z.r * 1.1);
-    const html = `<div style="position:relative;width:${size}px;height:${size}px;display:flex;align-items:center;justify-content:center;">
-      <div style="position:absolute;inset:0;border-radius:50%;background:${z.color};opacity:0.15;animation:lPulse 2s ease-out infinite;"></div>
-      <div style="position:absolute;inset:0;border-radius:50%;background:${z.color};opacity:0.08;animation:lPulse 2s ease-out 0.5s infinite;"></div>
-      <div style="width:${dot}px;height:${dot}px;border-radius:50%;background:${z.color};border:2.5px solid white;box-shadow:0 0 10px ${z.color};position:relative;z-index:1;"></div>
-    </div>`;
-    return L.marker([z.lat, z.lng], {
-      icon: L.divIcon({ className:'', html, iconSize:[size,size], iconAnchor:[size/2,size/2] }),
-      zIndexOffset: z.r * 10,
-    });
-  }
-
-  function buildMap() {
-    const el = document.getElementById('leaflet-map');
-    if (!el || !window.L) return false;
-
-    // Inject styles first
-    const s = document.createElement('style');
-    s.textContent = `
-      @keyframes lPulse{0%{transform:scale(1);opacity:.18}60%{transform:scale(2.4);opacity:0}100%{transform:scale(2.4);opacity:0}}
-      #leaflet-map{border-radius:16px!important;}
-      .leaflet-container{background:#0d1410!important;font-family:-apple-system,sans-serif;}
-      .cw2-popup .leaflet-popup-content-wrapper{background:rgba(16,16,18,.96)!important;border:1px solid rgba(255,255,255,.13)!important;border-radius:14px!important;box-shadow:0 8px 32px rgba(0,0,0,.8)!important;padding:0!important;}
-      .cw2-popup .leaflet-popup-content{margin:12px 14px!important;color:#fff;min-width:180px;}
-      .cw2-popup .leaflet-popup-tip-container{display:none!important;}
-      .leaflet-control-zoom{border:none!important;margin:0 8px 8px 0!important;}
-      .leaflet-control-zoom a{background:rgba(0,0,0,.75)!important;color:#fff!important;border:1px solid rgba(255,255,255,.15)!important;width:30px!important;height:30px!important;line-height:30px!important;font-size:16px!important;}
-      .leaflet-control-zoom-in{border-radius:8px 8px 0 0!important;}
-      .leaflet-control-zoom-out{border-radius:0 0 8px 8px!important;}
-      .leaflet-control-attribution{background:rgba(0,0,0,.5)!important;color:rgba(255,255,255,.3)!important;font-size:9px!important;}
-      .leaflet-control-attribution a{color:rgba(255,255,255,.4)!important;}
-      .leaflet-tile-pane{border-radius:16px!important;}
-    `;
-    document.head.appendChild(s);
-
-    const map = L.map(el, {
-      center: [27, 42],
-      zoom: 5,
-      zoomControl: true,
-      scrollWheelZoom: false,
-      touchZoom: true,
-      dragging: true,
-      renderer: L.canvas(),
-    });
-    map.zoomControl.setPosition('bottomright');
-
-    // Primary: ESRI satellite (same as free-map.org/satellite)
-    const esriSat = L.tileLayer(
-      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      { maxZoom:19, attribution:'© Esri, Maxar' }
-    );
-
-    // English labels on top of satellite
-    const esriLabels = L.tileLayer(
-      'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
-      { maxZoom:19, opacity:0.85 }
-    );
-
-    // Fallback tile if ESRI fails: CARTO Dark Matter
-    const cartoDark = L.tileLayer(
-      'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-      { subdomains:'abcd', maxZoom:19, attribution:'© OSM © CARTO' }
-    );
-
-    // Try ESRI, fall back to CARTO if tiles error
-    let esriOk = true;
-    esriSat.on('tileerror', function() {
-      if (esriOk) {
-        esriOk = false;
-        map.removeLayer(esriSat);
-        map.removeLayer(esriLabels);
-        cartoDark.addTo(map);
-      }
-    });
-
-    esriSat.addTo(map);
-    esriLabels.addTo(map);
-
-    // Markers
-    zones.forEach(z => {
-      const m = pulseMarker(z).addTo(map);
-      m.bindPopup(
-        `<div style="font-family:-apple-system,sans-serif;">
-          <div style="font-size:13px;font-weight:700;margin-bottom:3px;color:#fff;">${z.name}</div>
-          <div style="font-size:11px;font-weight:600;margin-bottom:7px;color:${z.color};">${z.level}</div>
-          <div style="font-size:11px;color:rgba(255,255,255,.72);line-height:1.5;">${z.detail}</div>
-        </div>`,
-        { className:'cw2-popup', offset:[0,-z.r*1.2], closeButton:false, autoPan:true }
-      );
-    });
-
-    // Proxy arcs
-    L.polyline([[32.5,53.7],[31.4,34.35]], {color:'rgba(255,69,58,.5)',weight:1.5,dashArray:'6,5'}).addTo(map);
-    L.polyline([[32.5,53.7],[33.5,35.5]],  {color:'rgba(255,69,58,.4)',weight:1.2,dashArray:'6,5'}).addTo(map);
-    L.polyline([[32.5,53.7],[15.4,44.2]],  {color:'rgba(255,159,10,.4)',weight:1.2,dashArray:'6,5'}).addTo(map);
-
-    // Critical: invalidate size at multiple intervals to handle layout shifts
-    [100, 300, 600, 1000].forEach(t => setTimeout(() => map.invalidateSize(), t));
-
-    return true;
-  }
-
-  function showFallback() {
-    const lm = document.getElementById('leaflet-map');
-    const fb = document.getElementById('map-fallback');
-    if (lm) lm.style.display = 'none';
-    if (fb) fb.style.display = 'block';
-  }
-
-  // Wait for both DOM + Leaflet JS to be ready
-  function tryBuild() {
-    if (!window.L) { showFallback(); return; }
-    const ok = buildMap();
-    if (!ok) showFallback();
-  }
-
-  // Multiple init attempts for reliability
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => setTimeout(tryBuild, 50));
-  } else {
-    setTimeout(tryBuild, 50);
-  }
-  // Belt-and-suspenders: try again after full page load
-  window.addEventListener('load', () => { 
-    const el = document.getElementById('leaflet-map');
-    if (el && !el._leaflet_id) setTimeout(tryBuild, 100);
-  });
-
-  // Fallback SVG tooltips
-  if (fb) {
-    fb.addEventListener('click', function(e) {
-      const zone = e.target.closest('[data-zone]');
-      const key  = zone ? zone.getAttribute('data-zone') : null;
-      const zData = key ? ({
-        'GAZA':    zones[0], 'LEBANON': zones[2], 'SYRIA': zones[3],
-        'IRAQ':    zones[4], 'IRAN':    zones[5], 'YEMEN': zones[6], 'HORMUZ': zones[7]
-      })[key] : null;
-
-      const tt  = document.getElementById('fb-tooltip');
-      const ttn = document.getElementById('fb-name');
-      const ttl = document.getElementById('fb-level');
-      const ttd = document.getElementById('fb-detail');
-
-      if (zData && tt) {
-        ttn.textContent = zData.name;
-        ttl.textContent = zData.level;
-        ttl.style.color = zData.color;
-        ttd.textContent = zData.detail;
-        tt.style.display = 'block';
-      } else if (tt && !e.target.closest('#fb-tooltip')) {
-        tt.style.display = 'none';
-      }
-    });
-  }
-})();
+renderChannelList('all');
 </script>
 </body>
 </html>
