@@ -259,6 +259,14 @@ body{background:var(--bg);min-height:100vh}
 .angle-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px}
 .angle-body{font-size:12px;color:var(--text2);line-height:1.5}
 
+/* ── BAR CHART ── */
+.stat-bar-container{display:flex;flex-direction:column;gap:12px}
+.stat-bar-row{display:flex;align-items:center;gap:10px}
+.stat-bar-label{width:75px;font-size:12px;font-weight:600;color:var(--text2);flex-shrink:0;text-align:right}
+.stat-bar-track{flex:1;height:8px;background:var(--sep);border-radius:4px;overflow:hidden}
+.stat-bar-fill{height:100%;border-radius:4px;transition:width 0.5s ease-out}
+.stat-bar-val{width:36px;font-size:13px;font-weight:700;color:var(--text);flex-shrink:0}
+
 /* ── BOTTOM CHROME ── */
 .safe-bottom{height:8px}
 .home-indicator{display:flex;justify-content:center;padding:8px 0 6px}
@@ -397,14 +405,14 @@ body{background:var(--bg);min-height:100vh}
             <div class="card-icon" style="background:rgba(255,149,0,0.12)">🌿</div>
             <div class="card-row-content">
               <div class="card-row-title">Dabur India</div>
-              <div class="card-row-sub">FMCG · Health · Ayurveda · Feb '26</div>
+              <div class="card-row-sub">Active in Broadcast · Missing on Digital</div>
             </div>
             <div class="card-row-right">
-              <span class="badge badge-red">Gaps found</span>
-              <span class="chevron">›</span>
+              <span class="badge badge-orange">Pitch Ready</span><span class="chevron">›</span>
             </div>
           </div>
         </div>
+
         <div class="section-label">Coming Soon</div>
         <div class="card-group">
           <div class="card-row" style="opacity:.45;cursor:default">
@@ -795,58 +803,6 @@ body{background:var(--bg);min-height:100vh}
             </div>
           </div>
 
-          <div class="data-source"><div class="data-source-text"><strong>📄 Source:</strong> Dabur India Pitch Suggestion PDF · Feb '26 Advertising Data · ITGD Property Deck</div></div>
-        </div><!-- /adv-seg-pitch -->
-
-        <!-- SEG: ANGLES -->
-        <div id="adv-seg-angles" style="display:none">
-          <div class="section-label" style="padding-top:4px">Key pitch angles</div>
-
-          <div class="angle-card">
-            <div class="angle-icon">🔴</div>
-            <div><div class="angle-title">AajTak TV → AajTak Digital upsell</div><div class="angle-body">Active on AajTak TV/CTV (140 impr.) but absent on AajTak Digital — direct revenue gap, easy TV-to-digital conversion story.</div></div>
-          </div>
-          <div class="angle-card">
-            <div class="angle-icon">⚔️</div>
-            <div><div class="angle-title">41,136 competition impressions</div><div class="angle-body">41,136 impressions active on Hindi digital competition — not on AajTak Digital. Risk of being outpaced by rivals in core Hindi-belt digital.</div></div>
-          </div>
-          <div class="angle-card">
-            <div class="angle-icon">💚</div>
-            <div><div class="angle-title">Health Wealth = Dabur's product universe</div><div class="angle-body">Single property that covers preventive wellness, immunity & Ayurveda. Entire Dabur portfolio maps directly. Integration as health knowledge partner, not just ad placement.</div></div>
-          </div>
-          <div class="angle-card">
-            <div class="angle-icon">🗺️</div>
-            <div><div class="angle-title">Geo: print → digital same audience</div><div class="angle-body">UP (24,419 sqcm print) + UP Tak/Lallantop = same 25–44 yrs Hindi-belt audience, now deliverable digitally with attribution and measurement.</div></div>
-          </div>
-          <div class="angle-card">
-            <div class="angle-icon">🌿</div>
-            <div><div class="angle-title">West Bengal: TV → AajTak Bangla bridge</div><div class="angle-body">795 sec on WB Regional TV + 1,485 sqcm WB Print. AajTak Bangla Digital = same Bengali audience, measurable ROI, zero current presence.</div></div>
-          </div>
-          <div class="angle-card">
-            <div class="angle-icon">👩</div>
-            <div><div class="angle-title">Women: Saas Bahu + Amla/Vatika fit</div><div class="angle-body">Only ITGD property with 50/50 gender split. Perfect bridge for Dabur Amla Hair Oil, Vatika, Fem — existing women-centric TV buy going digital.</div></div>
-          </div>
-          <div class="angle-card">
-            <div class="angle-icon">🌾</div>
-            <div><div class="angle-title">Rural: Kisan Tak → OTC & Honey</div><div class="angle-body">98% India, rural-first. Reaches kirana-level OTC buyers for Honey, Lal Tail, Pudin Hara, Hajmola at high purchase frequency.</div></div>
-          </div>
-          <div class="angle-card">
-            <div class="angle-icon">📺</div>
-            <div><div class="angle-title">Linear CTV → ITGD CTV upgrade</div><div class="angle-body">Active on Linear/CTV (140 impr.) but absent on ITGD CTV. Upgrade unlocks digital measurement, family co-viewing, and #1 news genre positioning on smart TVs.</div></div>
-          </div>
-          <div class="angle-card">
-            <div class="angle-icon">🌴</div>
-            <div><div class="angle-title">South gap: Tamil/Telugu active, Malayalam missing</div><div class="angle-body">6,195 sec Tamil + 5,305 sec Telugu broadcast active. Kerala = highest per-capita FMCG consumption + Ayurveda culture. IT Malayalam = first-mover advantage.</div></div>
-          </div>
-          <div class="angle-card">
-            <div class="angle-icon">🏔️</div>
-            <div><div class="angle-title">NE: underpenetrated FMCG, zero competition</div><div class="angle-body">Dabur has zero NE digital presence. IT NE is the only credible national media house with dedicated NE digital — brand-safe, uncontested environment.</div></div>
-          </div>
-          <div class="angle-card">
-            <div class="angle-icon">🌐</div>
-            <div><div class="angle-title">Diaspora: IT Global → NRI Ayurveda trust</div><div class="angle-body">Affluent Indian diaspora (US, UK, UAE) already buys Dabur internationally. NRI consumers influence purchase decisions back home. Minimal FMCG competition on IT Global.</div></div>
-          </div>
-
           <div class="data-source"><div class="data-source-text"><strong>📄 Source:</strong> Dabur India Pitch Suggestion PDF · Feb '26 Advertising Data · ITGD Deck Analysis · Prepared March 2026</div></div>
         </div><!-- /adv-seg-angles -->
 
@@ -855,6 +811,151 @@ body{background:var(--bg);min-height:100vh}
     </div><!-- /screen-adv-dabur -->
 
   </div><!-- /pane-advertiser -->
+
+  <!-- ═══ TAB PANE 3: MAGAZINES ═══ -->
+  <div class="tab-pane" id="pane-magazines">
+    
+    <!-- SCREEN: MAG LIST -->
+    <div class="screen active" id="screen-mag-list">
+      <div class="statusbar"><span class="clock">9:41</span><div class="statusbar-right"><span>●●●</span><div class="battery"><div class="battery-fill"></div></div></div></div>
+      <div class="navbar"><div></div><div class="nav-title">Magazine Intel</div><div></div></div>
+      <div class="scroll-area">
+        <div class="large-title">Competitor<br><span>Analysis</span></div>
+        <div class="source-badge">
+          <div class="source-dot"></div>
+          <div class="source-text">Print ad volume data <strong>Q1/Q2 2025-26</strong> · India Today vs Competitors.</div>
+        </div>
+        
+        <div class="section-label">Q1/Q2 Ad Volume (Pages)</div>
+        <div class="card-group" style="padding: 18px 16px;">
+          <div class="stat-bar-container">
+            <div class="stat-bar-row">
+              <span class="stat-bar-label">Outlook</span>
+              <div class="stat-bar-track"><div class="stat-bar-fill" style="width:100%;background:var(--purple)"></div></div>
+              <span class="stat-bar-val">68.5</span>
+            </div>
+            <div class="stat-bar-row">
+              <span class="stat-bar-label">India Today</span>
+              <div class="stat-bar-track"><div class="stat-bar-fill" style="width:60%;background:var(--blue)"></div></div>
+              <span class="stat-bar-val">41.2</span>
+            </div>
+            <div class="stat-bar-row">
+              <span class="stat-bar-label">The Week</span>
+              <div class="stat-bar-track"><div class="stat-bar-fill" style="width:25%;background:var(--orange)"></div></div>
+              <span class="stat-bar-val">14.5</span>
+            </div>
+            <div class="stat-bar-row">
+              <span class="stat-bar-label">OPEN</span>
+              <div class="stat-bar-track"><div class="stat-bar-fill" style="width:10%;background:var(--green)"></div></div>
+              <span class="stat-bar-val">5.0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label">Print Competitors</div>
+        <div class="card-group">
+          <div class="card-row" onclick="goToMagazine('indiatoday')">
+            <div class="card-icon" style="background:rgba(0,122,255,0.1)">🇮🇳</div>
+            <div class="card-row-content">
+              <div class="card-row-title">India Today</div>
+              <div class="card-row-sub">High volume, 37+ bookings</div>
+            </div>
+            <div class="card-row-right"><span class="badge badge-blue">View ›</span></div>
+          </div>
+          <div class="card-row" onclick="goToMagazine('outlook')">
+            <div class="card-icon" style="background:rgba(175,82,222,0.1)">📖</div>
+            <div class="card-row-content">
+              <div class="card-row-title">Outlook</div>
+              <div class="card-row-sub">Education features & Govt Booklets</div>
+            </div>
+            <div class="card-row-right"><span class="badge badge-purple">View ›</span></div>
+          </div>
+          <div class="card-row" onclick="goToMagazine('theweek')">
+            <div class="card-icon" style="background:rgba(255,149,0,0.12)">🏥</div>
+            <div class="card-row-content">
+              <div class="card-row-title">The Week</div>
+              <div class="card-row-sub">Hospital "Focus" dominator</div>
+            </div>
+            <div class="card-row-right"><span class="badge badge-orange">View ›</span></div>
+          </div>
+          <div class="card-row" onclick="goToMagazine('open')">
+            <div class="card-icon" style="background:rgba(52,199,89,0.1)">🏛️</div>
+            <div class="card-row-content">
+              <div class="card-row-title">OPEN</div>
+              <div class="card-row-sub">UP Govt & Premium Education</div>
+            </div>
+            <div class="card-row-right"><span class="badge badge-green">View ›</span></div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /screen-mag-list -->
+
+    <!-- SCREEN: OUTLOOK -->
+    <div class="screen" id="screen-mag-outlook">
+      <div class="statusbar"><span class="clock">9:41</span><div class="statusbar-right"><span>●●●</span><div class="battery"><div class="battery-fill"></div></div></div></div>
+      <div class="navbar"><button class="back-btn" onclick="goBackMag('screen-mag-list')"><svg viewBox="0 0 10 17" fill="none"><path d="M9 1L1 8.5L9 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</button><div class="nav-title">India Today vs Outlook</div><div></div></div>
+      <div class="scroll-area">
+        <div class="adv-hero" style="background:linear-gradient(135deg,#3a1c71 0%,#d76d77 50%,#ffaf7b 100%)">
+          <div class="adv-hero-tag">Q1 2025 Analysis</div>
+          <div class="adv-hero-name">Why Outlook steals volume</div>
+          <div class="adv-hero-sub">Heavy reliance on multi-page Govt booklets and clustered Education "Gamechanger" features compared to India Today's dispersed setup.</div>
+        </div>
+        <div class="section-label">Key Gaps vs India Today</div>
+        <div class="pitch-card"><div class="pitch-card-priority priority-high">🔴 Threat</div><div class="pitch-card-top"><div class="pitch-card-icon">🏛️</div><div><div class="pitch-card-name">Massive Government Booklets</div></div></div><div class="pitch-card-why"><strong>Insight:</strong> Outlook secured a <strong>28-page booklet</strong> insert from Rajasthan Tourism and a 16-page DSC initiative from Assam Govt.<br><br><strong>India Today Gap:</strong> We get 1-2 pagers from UP/Goa/Uttarakhand, but miss these mega-insert booklets. Propose "IT Custom Mini-Mags" to govts instead of single pages.</div></div>
+        <div class="pitch-card"><div class="pitch-card-priority priority-med">🟠 Missed Opportunity</div><div class="pitch-card-top"><div class="pitch-card-icon">🎓</div><div><div class="pitch-card-name">Bundled Education Features</div></div></div><div class="pitch-card-why"><strong>Insight:</strong> Outlook runs specific blocks like "FEATURE GAMECHANGERS IN EDUCATION", scooping up regional universities (Xavier, Shiv Nadar, GLA, UEM).<br><br><strong>IT Strategy:</strong> While IT gets standalone ads (Sathyabama, Galgotia), grouping Tier-2/3 institutes into a high-credibility "IT Education Special" can upsell them to double-page spreads.</div></div>
+      </div>
+    </div>
+
+    <!-- SCREEN: THE WEEK -->
+    <div class="screen" id="screen-mag-theweek">
+      <div class="statusbar"><span class="clock">9:41</span><div class="statusbar-right"><span>●●●</span><div class="battery"><div class="battery-fill"></div></div></div></div>
+      <div class="navbar"><button class="back-btn" onclick="goBackMag('screen-mag-list')"><svg viewBox="0 0 10 17" fill="none"><path d="M9 1L1 8.5L9 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</button><div class="nav-title">India Today vs The Week</div><div></div></div>
+      <div class="scroll-area">
+        <div class="adv-hero" style="background:linear-gradient(135deg,#e65c00 0%,#f9d423 100%)">
+          <div class="adv-hero-tag">Q1 2025 Analysis</div>
+          <div class="adv-hero-name">The Week's Hospital Monopoly</div>
+          <div class="adv-hero-sub">The Week dominates retail healthcare by leveraging "Focus" thematic sections covering Apollo, Sahyadri, and Narayana Health.</div>
+        </div>
+        <div class="section-label">Key Gaps vs India Today</div>
+        <div class="pitch-card"><div class="pitch-card-priority priority-high">🔴 Threat</div><div class="pitch-card-top"><div class="pitch-card-icon">🏥</div><div><div class="pitch-card-name">Healthcare Retail Network</div></div></div><div class="pitch-card-why"><strong>Insight:</strong> The Week captures massive volume from Hospital chains (Apollo, Narayana, Sahyadri, KIMS, Zydus) under their "FOCUS" editorial tag in a single April issue.<br><br><strong>India Today Strategy:</strong> India Today is currently dependent on 'HealthEdge Communications' individual doctor ads. We need to pitch omnichannel corporate hospital packages combining IT Print + 'Health Wealth' digital property.</div></div>
+        <div class="pitch-card"><div class="pitch-card-priority priority-med">🟠 Shared Clients</div><div class="pitch-card-top"><div class="pitch-card-icon">🤝</div><div><div class="pitch-card-name">Auto & Funds Cross-Overs</div></div></div><div class="pitch-card-why"><strong>Insight:</strong> They share mutual fund and auto clients with IT (MRF, Nippon).<br><strong>IT Strategy:</strong> We can pitch a larger share-of-wallet by offering India Today digital supplements (Auto Tak, Biz Tak) which The Week completely lacks.</div></div>
+      </div>
+    </div>
+
+    <!-- SCREEN: OPEN -->
+    <div class="screen" id="screen-mag-open">
+      <div class="statusbar"><span class="clock">9:41</span><div class="statusbar-right"><span>●●●</span><div class="battery"><div class="battery-fill"></div></div></div></div>
+      <div class="navbar"><button class="back-btn" onclick="goBackMag('screen-mag-list')"><svg viewBox="0 0 10 17" fill="none"><path d="M9 1L1 8.5L9 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</button><div class="nav-title">India Today vs OPEN</div><div></div></div>
+      <div class="scroll-area">
+        <div class="adv-hero" style="background:linear-gradient(135deg,#11998e 0%,#38ef7d 100%)">
+          <div class="adv-hero-tag">Q2 2025 Analysis</div>
+          <div class="adv-hero-name">OPEN Premium Targetting</div>
+          <div class="adv-hero-sub">Grabbing high-visibility cover positions for Govt of UP and top-tier Education clients.</div>
+        </div>
+        <div class="section-label">Key Gaps vs India Today</div>
+        <div class="pitch-card"><div class="pitch-card-priority priority-med">🟠 Watch Out</div><div class="pitch-card-top"><div class="pitch-card-icon">🏫</div><div><div class="pitch-card-name">Premium Education Buys</div></div></div><div class="pitch-card-why"><strong>Insight:</strong> OPEN secured the highly prized Inside Front Cover & Facing Page (2 pages) from Galgotia University and OBC from Prestige Group.<br><br><strong>India Today Action:</strong> Galgotia advertises in IT too (April 14 DSC). We should secure long-term cover contracts + digital bundles to lock them out of OPEN budgets entirely.</div></div>
+        <div class="pitch-card"><div class="pitch-card-priority priority-high">🔴 Govt Threat</div><div class="pitch-card-top"><div class="pitch-card-icon">🏛️</div><div><div class="pitch-card-name">UP Govt Targeted Campaigns</div></div></div><div class="pitch-card-why"><strong>Insight:</strong> UP Govt uses OPEN for dedicated multi-page themes ("School Pairing", "Support Women's Ownership") in single issues.<br><br><strong>India Today Action:</strong> We receive standard UP DIPR ads. We must proactively pitch theme-based editorial partnerships (e.g. Women empowerment in UP) integrating Print + Lallantop/UP Tak to sweep their entire thematic budget.</div></div>
+      </div>
+    </div>
+
+    <!-- SCREEN: INDIA TODAY -->
+    <div class="screen" id="screen-mag-indiatoday">
+      <div class="statusbar"><span class="clock">9:41</span><div class="statusbar-right"><span>●●●</span><div class="battery"><div class="battery-fill"></div></div></div></div>
+      <div class="navbar"><button class="back-btn" onclick="goBackMag('screen-mag-list')"><svg viewBox="0 0 10 17" fill="none"><path d="M9 1L1 8.5L9 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</button><div class="nav-title">India Today Print Stats</div><div></div></div>
+      <div class="scroll-area">
+        <div class="adv-hero" style="background:linear-gradient(135deg,#0055d4 0%,#007aff 100%)">
+          <div class="adv-hero-tag">Q1/Q2 2025 Data</div>
+          <div class="adv-hero-name">India Today Volume</div>
+          <div class="adv-hero-sub">Highest distinct advertiser count (37+ bookings) across Education, Retail, and Corporate compared to rivals.</div>
+        </div>
+        <div class="section-label">Performance Breakdown</div>
+        <div class="pitch-card"><div class="pitch-card-priority priority-strategic">🟢 Strength</div><div class="pitch-card-top"><div class="pitch-card-icon">📚</div><div><div class="pitch-card-name">Broad Education Client Base</div></div></div><div class="pitch-card-why"><strong>Insight:</strong> Consistently secured 1-to-2 page buys from Sathyabama, Galgotias, CESC, BML Munjal, RV University, etc. over multiple issues.<br><br><strong>Opportunity:</strong> Bundle these fragmented buys into a unified "India Today Education Mega Special" to upsell them to spreads and block competitor budgets.</div></div>
+        <div class="pitch-card"><div class="pitch-card-priority priority-high">🔴 Gap</div><div class="pitch-card-top"><div class="pitch-card-icon">🏛️</div><div><div class="pitch-card-name">Missing State Mega-Booklets</div></div></div><div class="pitch-card-why"><strong>Insight:</strong> IT relies heavily on single FP or DSC ads (e.g., Goa Tourism, UP Govt). Competitors (Outlook) are successfully selling massive 16 to 28-page booklets to State Govts (Assam, Rajasthan).<br><br><strong>Action:</strong> Pitch custom bounded mini-magazines to State Govts highlighting our massive bundled digital reach via the TAK network.</div></div>
+        <div class="safe-bottom"></div>
+      </div>
+    </div>
+
+  </div><!-- /pane-magazines -->
 
   <!-- ═══ TAB BAR ═══ -->
   <div class="tabbar">
@@ -865,6 +966,10 @@ body{background:var(--bg);min-height:100vh}
     <div class="tab-item" id="tab-advertiser" onclick="switchTab('advertiser')">
       <div class="tab-icon">🎯</div>
       <div class="tab-label">Advertiser Intel</div>
+    </div>
+    <div class="tab-item" id="tab-magazines" onclick="switchTab('magazines')">
+      <div class="tab-icon">📖</div>
+      <div class="tab-label">Magazines</div>
     </div>
   </div>
 
@@ -901,6 +1006,24 @@ function goToAdvertiser(id) {
 function goBackAdv(id) { showAdvScreen(id, true); }
 function showAdvScreen(id, back) {
   const pane = document.getElementById('pane-advertiser');
+  pane.querySelectorAll('.screen').forEach(s=>s.classList.remove('active','back'));
+  const t = document.getElementById(id);
+  if (back) t.classList.add('back');
+  t.classList.add('active');
+  const sa = t.querySelector('.scroll-area');
+  if (sa) sa.scrollTop = 0;
+}
+
+// ── MAGAZINE SCREENS ──
+function goToMagazine(id) {
+  if (id === 'indiatoday') showMagScreen('screen-mag-indiatoday');
+  if (id === 'outlook') showMagScreen('screen-mag-outlook');
+  if (id === 'theweek') showMagScreen('screen-mag-theweek');
+  if (id === 'open') showMagScreen('screen-mag-open');
+}
+function goBackMag(id) { showMagScreen(id, true); }
+function showMagScreen(id, back) {
+  const pane = document.getElementById('pane-magazines');
   pane.querySelectorAll('.screen').forEach(s=>s.classList.remove('active','back'));
   const t = document.getElementById(id);
   if (back) t.classList.add('back');
